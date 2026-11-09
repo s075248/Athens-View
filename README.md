@@ -38,7 +38,7 @@ All of these are controlled from `assets/js/data.js` (each block has comments).
 - Speedboat time (35 min) and transfer price ($35) – confirm with your operator.
 - The structured data block at the end of `<head>` in `index.html` repeats the phone, email, address and prices for
   Google. Update it whenever you change those in `data.js`.
-- Site URL `https://s075248.github.io/Athens-View/` is used in canonical links, `robots.txt` and `sitemap.xml`.
+- Site URL `https://s075248.github.io/athensview/` is used in canonical links, `robots.txt` and `sitemap.xml`.
   If you move the site or add a custom domain, search-and-replace it.
 - Icons: the Material Symbols font loads only the icons listed in `icon_names=` in each page's `<head>`. If you
   use a new icon (e.g. in `data.js`), add its name to that list on every page, keeping it in alphabetical order.
