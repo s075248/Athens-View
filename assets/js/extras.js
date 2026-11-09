@@ -10,34 +10,29 @@
   var $ = U.$, $$ = U.$$, esc = U.esc, money = U.money;
 
   /* ---------------------------- packages ---------------------------- */
-  function packagePrice(pk, s) {
-    var room = U.byId(AV.rooms, pk.room), g = Math.min(8, pk.guests), rooms = Math.ceil(g / room.maxGuests);
-    var co = U.iso(U.addDays(U.fromIso(s.checkin), pk.nights));
-    var base = U.stayCost(room, s.checkin, co).total * rooms;
-    pk.excursions.forEach(function (id) { base += U.byId(AV.excursions, id).price * g; });
-    var tr = { none: 0, arrival: 1, departure: 1, both: 2 }[pk.transfer] || 0;
-    base += C.transferPrice * g * tr;
-    return { guests: g, list: base, now: Math.round(base * (100 - pk.discount) / 100) };
-  }
-
   function mountPackages() {
     $$('[data-packages]').forEach(function (box) {
-      var s = U.getSearch(), list = AV.packages || [];
+      var list = AV.packages || [];
       if (!list.length) { box.classList.add('hidden'); return; }
       box.innerHTML = list.map(function (pk) {
-        var room = U.byId(AV.rooms, pk.room), p = packagePrice(pk, s);
-        var href = 'booking.html?' + U.qs({ pkg: pk.id, checkin: s.checkin, guests: p.guests });
+        var room = U.byId(AV.rooms, pk.room);
         var items = [pk.nights + ' nights · ' + room.name]
           .concat(pk.excursions.map(function (id) { return U.byId(AV.excursions, id).name; }))
           .concat(pk.transfer === 'both' ? ['Round-trip speedboat transfer'] : pk.transfer === 'none' ? [] : ['Speedboat transfer (one way)']);
+        var msg = 'Hello Athens View! I would like to get the "' + pk.name + '" package (' + pk.nights + ' nights, ' + room.name + ').\nTravel dates: \nNumber of guests: ';
         return '<article class="av-pkg">' +
-          '<span class="av-pkg-save">Save ' + pk.discount + '%</span>' +
           '<span class="av-pkg-ico material-symbols-outlined">' + esc(pk.icon || 'redeem') + '</span>' +
           '<h3>' + esc(pk.name) + '</h3><p class="av-pkg-tag">' + esc(pk.tagline || '') + '</p>' +
           '<ul>' + items.map(function (t) { return '<li><span class="material-symbols-outlined">check_circle</span>' + esc(t) + '</li>'; }).join('') + '</ul>' +
-          '<div class="av-pkg-price"><span class="av-pkg-was">' + money(p.list) + '</span> <b>' + money(p.now) + '</b><small>for ' + p.guests + ' guests · from ' + esc(U.prettyDate(s.checkin)) + '</small></div>' +
-          '<a class="av-pkg-cta" data-pkg-link href="' + href + '">Choose this package</a></article>';
+          '<div class="av-pkg-actions"><a class="av-pkg-cta" data-pkg-link target="_blank" rel="noopener" href="' + U.wa(msg) + '">Contact us for this package</a>' +
+          '<a class="av-pkg-alt" href="mailto:' + esc(C.email) + '?subject=' + encodeURIComponent('Package enquiry: ' + pk.name) + '&body=' + encodeURIComponent(msg) + '">or email us</a></div></article>';
       }).join('');
+    });
+    $$('[data-pkg-steps]').forEach(function (box) {
+      var steps = [['checklist', 'Choose', 'Pick the package that fits your trip.'], ['chat', 'Message us', 'Tell us your dates and guests on WhatsApp or email.'],
+        ['event_available', 'We confirm', 'We check availability and confirm the details.'], ['payments', 'You pay', 'We send the payment options to secure your booking.'], ['directions_boat', 'You arrive', 'We meet you at the jetty and welcome you to Guraidhoo.']];
+      box.innerHTML = '<h3 class="av-steps-h">How to get a package</h3><ol class="av-steps">' + steps.map(function (st, i) {
+        return '<li><span class="av-step-n">' + (i + 1) + '</span><span class="material-symbols-outlined">' + st[0] + '</span><b>' + st[1] + '</b><span>' + st[2] + '</span></li>'; }).join('') + '</ol>';
     });
   }
 
@@ -52,11 +47,22 @@
       if (!list.length) { box.classList.add('hidden'); return; }
       var btns = [['google', 'Google'], ['tripadvisor', 'TripAdvisor'], ['booking', 'Booking.com']].filter(function (b) { return links[b[0]]; })
         .map(function (b) { return '<a class="av-rev-link" target="_blank" rel="noopener" href="' + esc(links[b[0]]) + '">Read more on ' + b[1] + '<span class="material-symbols-outlined">north_east</span></a>'; }).join('');
-      box.innerHTML = '<div class="av-reviews">' + list.map(function (r) {
+      box.innerHTML = '<span class="font-label-sm text-label-sm text-secondary uppercase tracking-widest">Guest reviews</span><h2 class="av-h2">What our guests say</h2><div class="av-reviews">' + list.map(function (r) {
         var src = r.source ? (r.url ? '<a target="_blank" rel="noopener" href="' + esc(r.url) + '">via ' + esc(r.source) + '</a>' : '<span>via ' + esc(r.source) + '</span>') : '';
         return '<figure class="av-review"><span class="av-rev-q material-symbols-outlined">format_quote</span>' + stars(r.stars || 5) +
           '<blockquote>“' + esc(r.text) + '”</blockquote><figcaption><b>' + esc(r.name) + '</b>' + (r.country ? '<span>• ' + esc(r.country) + '</span>' : '') + src + '</figcaption></figure>';
       }).join('') + '</div>' + (btns ? '<div class="av-rev-links">' + btns + '</div>' : '');
+    });
+  }
+
+  /* ---------------------------- real rating (only when set in data.js) ---------------------------- */
+  function mountRating() {
+    var r = C.googleRating, n = C.googleReviews, url = (C.reviewLinks || {}).google;
+    $$('[data-rating]').forEach(function (el) {
+      if (!r) { el.classList.add('hidden'); return; }
+      var txt = '★ ' + r + ' on Google' + (n ? ' · ' + n + ' reviews' : '');
+      el.innerHTML = url ? '<a target="_blank" rel="noopener" href="' + esc(url) + '">' + esc(txt) + '</a>' : esc(txt);
+      el.classList.remove('hidden');
     });
   }
 
@@ -99,6 +105,68 @@
     var set = AV.lightboxSet && AV.lightboxSet.length ? AV.lightboxSet : [img.src], i = set.indexOf(img.getAttribute('src'));
     lbOpen(set, i < 0 ? 0 : i);
   });
+
+  function mountOfferConditions() {
+    $$('[data-offer-terms]').forEach(function (ul) {
+      var S = AV.signup; if (!S) return;
+      ul.innerHTML = S.terms.concat(['Valid until ' + U.prettyDate(S.expires) + '.']).map(function (t) { return '<li>' + esc(t) + '</li>'; }).join('');
+    });
+  }
+
+  /* ---------------------------- sign-up offer pop-up ---------------------------- */
+  var su = null, suTimer = null, suOpen = false;
+  function store(k, v) { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch (e) { try { if (v === undefined) return sessionStorage.getItem(k); sessionStorage.setItem(k, v); } catch (e2) {} } return null; }
+  function offerLive() { var S = AV.signup; return !!(S && S.enabled && (!S.expires || U.iso(new Date()) <= S.expires)); }
+  function suClose() {
+    if (!su) return; su.classList.remove('open'); suOpen = false; document.body.style.overflow = $('.av-modal.open') ? 'hidden' : '';
+    if (su._ret && su._ret.focus) su._ret.focus();
+  }
+  function suShow() {
+    if (suOpen || store('av_signup')) return;
+    if ($('.av-modal.open') || $('.av-lb.open')) { suTimer = setTimeout(suShow, 8000); return; }
+    var S = AV.signup; suOpen = true; store('av_signup', 'shown'); U.track('signup-shown');
+    su = document.createElement('div'); su.className = 'av-su open'; su.setAttribute('role', 'dialog'); su.setAttribute('aria-modal', 'true'); su.setAttribute('aria-labelledby', 'av-su-t');
+    su._ret = document.activeElement;
+    su.innerHTML = '<div class="av-su-card"><button type="button" class="av-su-x" data-su-close aria-label="Close">×</button>' +
+      '<div data-su-form><span class="av-su-badge">Welcome offer</span>' +
+      '<h2 id="av-su-t">' + S.percent + '% off your first direct stay</h2>' +
+      '<p>Leave your email or WhatsApp number and we’ll show you your code straight away. Valid until ' + esc(U.prettyDate(S.expires)) + '.</p>' +
+      '<form novalidate><label class="av-su-l" for="av-su-c">Email or phone / WhatsApp</label><input id="av-su-c" name="contact" autocomplete="email" placeholder="you@example.com or +44 7…" required/>' +
+      '<label class="av-su-consent"><input type="checkbox" name="consent" required/><span>I agree that Athens View may contact me by email, SMS or WhatsApp with this offer, booking reminders and occasional updates. I can unsubscribe at any time. <a href="privacy.html">Privacy Policy</a></span></label>' +
+      '<p class="av-su-err" role="alert"></p><button type="submit" class="av-su-btn">Get my code</button></form>' +
+      '<details class="av-su-terms"><summary>Offer terms</summary><ul>' + S.terms.map(function (t) { return '<li>' + esc(t) + '</li>'; }).join('') + '</ul></details></div>' +
+      '<div data-su-done class="hidden"><span class="av-su-badge">You’re in</span><h2>Your code</h2><p class="av-su-code" data-su-code></p><p data-su-msg></p>' +
+      '<p><a class="av-su-btn" href="booking.html">Plan my stay</a></p><button type="button" class="av-su-later" data-su-close>Close</button></div></div>';
+    document.body.appendChild(su); document.body.style.overflow = 'hidden';
+    su.addEventListener('click', function (e) { if (e.target === su || e.target.closest('[data-su-close]')) suClose(); });
+    su.addEventListener('keydown', function (e) { if (e.key === 'Escape') suClose(); });
+    $('form', su).addEventListener('submit', function (e) { e.preventDefault(); suSubmit($('form', su)); });
+    setTimeout(function () { var i = $('#av-su-c', su); if (i) i.focus(); }, 60);
+  }
+  function suSubmit(f) {
+    var S = AV.signup, v = f.elements.contact.value.trim(), err = $('.av-su-err', f), isMail = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v), isTel = v.replace(/\D/g, '').length >= 7 && !/[a-z@]/i.test(v);
+    if (!isMail && !isTel) { err.textContent = 'Please enter a valid email address or phone number.'; f.elements.contact.focus(); return; }
+    if (!f.elements.consent.checked) { err.textContent = 'Please tick the box to agree to be contacted.'; return; }
+    err.textContent = '';
+    var lead = { type: 'signup', contact: v, kind: isMail ? 'email' : 'phone', consent: true, code: S.code, offer: S.percent + '% first direct stay', expires: S.expires, page: location.pathname.split('/').pop() || 'index.html', lang: AV.lang || 'en', at: new Date().toISOString() };
+    store('av_signup', 'done'); store('av_code', S.code); U.track('signup-submitted');
+    var btn = $('.av-su-btn', f); btn.disabled = true;
+    function done(ok) {
+      $('[data-su-form]', su).classList.add('hidden'); $('[data-su-done]', su).classList.remove('hidden');
+      $('[data-su-code]', su).textContent = S.code;
+      $('[data-su-msg]', su).textContent = ok ? 'Thank you! We’ve saved your details and will send a welcome message soon. Quote this code when you book – valid until ' + U.prettyDate(S.expires) + '.' : 'Quote this code when you book – valid until ' + U.prettyDate(S.expires) + '.';
+      if (!ok && !C.formEndpoint) window.open('mailto:' + C.email + '?subject=' + encodeURIComponent('Welcome offer – please send me updates') + '&body=' + encodeURIComponent('Hello Athens View, please send me the welcome offer (' + S.code + ') and keep me updated.\nContact: ' + v + '\nI agree to be contacted by email / SMS / WhatsApp.'), '_self');
+    }
+    if (C.formEndpoint) U.postJson(lead).then(done); else done(false);
+  }
+  function initSignup() {
+    var page = document.body.dataset.page;
+    if (!offerLive() || ['booking', 'contact', 'privacy', '404'].indexOf(page) > -1 || store('av_signup')) return;
+    suTimer = setTimeout(suShow, (AV.signup.delaySeconds || 25) * 1000);
+    document.addEventListener('mouseout', function (e) { if (!e.relatedTarget && e.clientY <= 0 && !suOpen && !store('av_signup')) { clearTimeout(suTimer); suShow(); } });
+  }
+  /* show the code again on request, e.g. <a data-show-offer> */
+  U.offerLive = offerLive;
 
   /* ---------------------------- climate / best time ---------------------------- */
   function mountWeather() {
@@ -157,6 +225,6 @@
   }
 
   document.addEventListener('DOMContentLoaded', function () {
-    mountPackages(); mountReviews(); mountWeather(); mountTrips(); loadFeed(); if (!navigator.onLine) offlineBadge();
+    mountPackages(); mountReviews(); mountRating(); mountOfferConditions(); mountWeather(); initSignup(); mountTrips(); loadFeed(); if (!navigator.onLine) offlineBadge();
   });
 })();

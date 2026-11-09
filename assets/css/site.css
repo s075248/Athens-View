@@ -210,3 +210,63 @@ img[data-lightbox] { cursor: zoom-in; }
   nav.bottom-nav.bottom-nav .font-label-sm { font-size: .6875rem; }
   nav.bottom-nav.bottom-nav > a[data-bnav="booking"] { padding-inline: .75rem; }
 }
+
+/* nav: keep each link on one line (e.g. "Dining & Terrace") */
+nav[aria-label="Main"] a { white-space: nowrap; }
+@media (min-width: 1024px) and (max-width: 1535px) {
+  nav[aria-label="Main"] { gap: .85rem; }
+  nav[aria-label="Main"] a { font-size: .875rem; }
+  header a[data-wa-link] > span:last-child { display: none; }
+  header a[data-wa-link] { padding-inline: .7rem; }
+  header .av-lang-desk { padding: .5rem 1.6rem .5rem .75rem; font-size: .8125rem; }
+  header a[href="booking.html"] { padding-inline: 1rem; white-space: nowrap; }
+}
+@media (min-width: 1024px) and (max-width: 1199px) {
+  html:not([lang="en"]) nav[aria-label="Main"] { gap: .6rem; }
+  html:not([lang="en"]) nav[aria-label="Main"] a { font-size: .8125rem; }
+}
+@media (min-width: 1024px) and (max-width: 1099px) {
+  html:not([lang="en"]) nav[aria-label="Main"] { gap: .2rem; }
+}
+@media (min-width: 1536px) {
+  /* the page column stops growing at 1280px, so longer translated labels need the compact WhatsApp button at any larger width */
+  html:not([lang="en"]) header a[data-wa-link] > span:last-child { display: none; }
+}
+
+/* package cards: contact buttons instead of prices */
+.av-pkg-actions { margin-top: auto; padding-top: .75rem; border-top: 1px dashed var(--av-line); display: grid; gap: .6rem; text-align: center; }
+.av-pkg-alt { color: var(--av-primary); font-size: .875rem; text-decoration: underline; }
+.av-h2 { font-family: Outfit, ui-sans-serif, system-ui, sans-serif; font-size: 2rem; font-weight: 700; color: var(--av-primary); margin: .25rem 0 1.5rem; letter-spacing: -.01em; }
+
+/* step lists (how to get a package / how to get here) */
+.av-steps-h { font-family: Outfit, ui-sans-serif, system-ui, sans-serif; font-size: 1.375rem; font-weight: 600; color: var(--av-primary); margin: 2rem 0 .75rem; }
+.av-steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr)); gap: 1rem; }
+.av-steps-3 { grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); }
+.av-steps li { position: relative; display: flex; flex-direction: column; gap: .3rem; padding: 1.25rem 1rem 1rem; border-radius: 1.25rem; background: #fff; border: 1px solid var(--av-line); box-shadow: 0 8px 24px -10px rgba(10,77,104,.14); font-size: .9rem; color: var(--av-mute); }
+.av-steps li b { color: var(--av-primary); font-size: 1.0625rem; font-family: Outfit, ui-sans-serif, system-ui, sans-serif; }
+.av-steps li > .material-symbols-outlined { color: var(--av-cyan); font-size: 1.75rem; }
+.av-step-n { position: absolute; top: .75rem; right: .75rem; width: 1.5rem; height: 1.5rem; border-radius: 9999px; background: var(--av-magenta); color: #fff; font-size: .75rem; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+
+/* sign-up pop-up */
+.av-su { position: fixed; inset: 0; z-index: 95; display: none; align-items: center; justify-content: center; padding: 1rem; background: rgba(0,30,44,.6); backdrop-filter: blur(4px); }
+.av-su.open { display: flex; }
+.av-su-card { position: relative; width: 100%; max-width: 28rem; max-height: 92vh; overflow-y: auto; padding: 1.75rem 1.5rem 1.5rem; border-radius: 1.5rem; background: #fff; box-shadow: 0 24px 60px rgba(0,30,44,.35); animation: sheetUp .28s ease both; }
+.av-su-x { position: absolute; top: .6rem; right: .6rem; width: 2.5rem; height: 2.5rem; border-radius: 9999px; background: var(--av-low); color: var(--av-primary); font-size: 1.5rem; line-height: 1; }
+.av-su-badge { display: inline-block; padding: .2rem .75rem; border-radius: 9999px; background: var(--av-magenta); color: #fff; font-size: .75rem; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; }
+.av-su h2 { font-family: Outfit, ui-sans-serif, system-ui, sans-serif; font-size: 1.625rem; font-weight: 700; line-height: 1.2; color: var(--av-primary); margin: .75rem 2rem .5rem 0; }
+.av-su p { color: var(--av-mute); font-size: .9375rem; line-height: 1.5; margin: 0 0 .75rem; }
+.av-su-l { display: block; font-size: .75rem; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: var(--av-mute); margin-bottom: .25rem; }
+.av-su input[name=contact] { width: 100%; padding: .8rem 1rem; border-radius: .9rem; background: var(--av-low); border: 2px solid transparent; outline: none; font-size: 1rem; color: #12232b; }
+.av-su input[name=contact]:focus { background: #fff; border-color: rgba(8,131,149,.45); }
+.av-su-consent { display: flex; gap: .6rem; align-items: flex-start; margin: .85rem 0 .25rem; font-size: .8125rem; color: var(--av-mute); line-height: 1.45; }
+.av-su-consent input { margin-top: .2rem; width: 1.1rem; height: 1.1rem; flex: none; accent-color: #d81b60; }
+.av-su-consent a { color: var(--av-magenta); text-decoration: underline; }
+.av-su-err { min-height: 1.1rem; color: var(--av-magenta) !important; font-size: .8125rem !important; margin: .25rem 0 !important; }
+.av-su-btn { display: block; width: 100%; text-align: center; padding: .9rem 1rem; border-radius: 9999px; background: var(--av-magenta); color: #fff; font-weight: 600; box-shadow: 0 8px 20px -4px rgba(216,27,96,.35); }
+.av-su-btn:hover { background: var(--av-magenta-d); }
+.av-su-btn:disabled { opacity: .6; }
+.av-su-later { display: block; margin: .25rem auto 0; color: var(--av-mute); text-decoration: underline; font-size: .875rem; }
+.av-su-code { font-family: Outfit, ui-sans-serif, system-ui, sans-serif; font-size: 2rem !important; font-weight: 700; letter-spacing: .12em; text-align: center; padding: .75rem; border-radius: 1rem; background: var(--av-sand); border: 2px dashed rgba(224,169,109,.7); color: var(--av-primary) !important; }
+.av-su-terms { margin-top: .9rem; font-size: .8125rem; color: var(--av-mute); }
+.av-su-terms summary { cursor: pointer; font-weight: 600; color: var(--av-primary); }
+.av-su-terms ul { margin: .5rem 0 0; padding-left: 1.1rem; display: grid; gap: .3rem; }

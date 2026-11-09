@@ -292,6 +292,8 @@
   /* ---------- request senders (shared by contact / booking / newsletter) ---------- */
   function postJson(payload) {
     if (!C.formEndpoint) return Promise.resolve(false);
+    /* a Google Sheet web app (Apps Script) cannot answer a normal browser request, so send it the simple way */
+    if (/script\.google\.com/.test(C.formEndpoint)) return fetch(C.formEndpoint, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) }).then(function () { return true; }).catch(function () { return false; });
     return fetch(C.formEndpoint, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: JSON.stringify(payload) })
       .then(function (r) { return r.ok; }).catch(function () { return false; });
   }

@@ -198,6 +198,42 @@
     ["Booked", "Занято", "Occupato", "Belegt", "已订满"],
 
     /* misc / app */
+    /* packages, steps, how to get here */
+    ["Stay + explore, all in one package", "Проживание + экскурсии в одном пакете", "Soggiorno + esplorazione in un unico pacchetto", "Übernachten + entdecken in einem Paket", "住宿加游览，一个套餐搞定"],
+    ["Contact us for this package", "Связаться по этому пакету", "Contattaci per questo pacchetto", "Kontakt für dieses Paket", "咨询此套餐"],
+    ["or email us", "или напишите на e-mail", "oppure scrivici via e-mail", "oder per E-Mail", "或发送邮件给我们"],
+    ["How to get a package", "Как получить пакет", "Come ottenere un pacchetto", "So erhalten Sie ein Paket", "如何预订套餐"],
+    ["Choose", "Выберите", "Scegli", "Auswählen", "选择"],
+    ["Pick the package that fits your trip.", "Выберите пакет, подходящий для вашей поездки.", "Scegli il pacchetto più adatto al tuo viaggio.", "Wählen Sie das Paket, das zu Ihrer Reise passt.", "选择适合您行程的套餐。"],
+    ["Message us", "Напишите нам", "Scrivici", "Schreiben Sie uns", "联系我们"],
+    ["Tell us your dates and guests on WhatsApp or email.", "Сообщите даты и число гостей в WhatsApp или по e-mail.", "Indicaci date e ospiti su WhatsApp o via e-mail.", "Nennen Sie uns Daten und Gästezahl per WhatsApp oder E-Mail.", "通过 WhatsApp 或邮件告诉我们日期和人数。"],
+    ["We confirm", "Мы подтверждаем", "Confermiamo", "Wir bestätigen", "我们确认"],
+    ["We check availability and confirm the details.", "Мы проверим наличие мест и подтвердим детали.", "Verifichiamo la disponibilità e confermiamo i dettagli.", "Wir prüfen die Verfügbarkeit und bestätigen die Details.", "我们核实空房并确认细节。"],
+    ["You pay", "Вы оплачиваете", "Paghi", "Sie zahlen", "您付款"],
+    ["We send the payment options to secure your booking.", "Мы пришлём варианты оплаты, чтобы закрепить бронь.", "Ti inviamo le opzioni di pagamento per confermare la prenotazione.", "Wir senden Ihnen die Zahlungsmöglichkeiten, um die Buchung zu sichern.", "我们会发送付款方式以确保您的预订。"],
+    ["You arrive", "Вы приезжаете", "Arrivi", "Sie reisen an", "您抵达"],
+    ["We meet you at the jetty and welcome you to Guraidhoo.", "Мы встретим вас у причала и поприветствуем на Гурайду.", "Ti accogliamo al molo e ti diamo il benvenuto a Guraidhoo.", "Wir empfangen Sie am Steg und heißen Sie auf Guraidhoo willkommen.", "我们在码头迎接您，欢迎来到古莱杜岛。"],
+    ["Plan your arrival", "Спланируйте прибытие", "Pianifica l’arrivo", "Anreise planen", "规划抵达"],
+    ["How to get here", "Как добраться", "Come arrivare", "So kommen Sie zu uns", "如何抵达"],
+    ["Arrive at Velana International Airport and collect your bags.", "Прилетите в международный аэропорт Велана и заберите багаж.", "Arriva all’aeroporto internazionale di Velana e ritira i bagagli.", "Landen Sie am Velana International Airport und holen Sie Ihr Gepäck ab.", "抵达 Velana 国际机场并领取行李。"],
+    ["Take the speedboat from the airport jetty to Guraidhoo harbour.", "Сядьте на скоростной катер от причала аэропорта до гавани Гурайду.", "Prendi il motoscafo dal molo dell’aeroporto al porto di Guraidhoo.", "Nehmen Sie das Speedboat vom Flughafensteg zum Hafen von Guraidhoo.", "从机场码头乘快艇前往古莱杜岛港口。"],
+    ["Our team meets you at the harbour; the guest house is a short walk away.", "Наша команда встретит вас в гавани; до гостевого дома – пара минут пешком.", "Il nostro team ti accoglie al porto; la guest house è a pochi passi.", "Unser Team empfängt Sie am Hafen; das Gästehaus ist nur wenige Schritte entfernt.", "我们的团队在港口迎接您，民宿步行即达。"],
+    ["Full directions & transfer info", "Подробный маршрут и информация о трансфере", "Indicazioni complete e info sui trasferimenti", "Vollständige Anreise & Transfer-Infos", "完整路线与接送信息"],
+    ["Book Direct With Us", "Бронируйте напрямую у нас", "Prenota direttamente con noi", "Direkt bei uns buchen", "直接向我们预订"],
+    /* sign-up offer */
+    ["Welcome offer", "Приветственное предложение", "Offerta di benvenuto", "Willkommensangebot", "欢迎优惠"],
+    ["Email or phone / WhatsApp", "E-mail или телефон / WhatsApp", "E-mail o telefono / WhatsApp", "E-Mail oder Telefon / WhatsApp", "邮箱或电话 / WhatsApp"],
+    ["you@example.com or +44 7…", "you@example.com или +44 7…", "tu@esempio.com o +44 7…", "sie@beispiel.de oder +44 7…", "you@example.com 或 +44 7…"],
+    ["I agree that Athens View may contact me by email, SMS or WhatsApp with this offer, booking reminders and occasional updates. I can unsubscribe at any time.", "Я согласен(на), что Athens View может связываться со мной по e-mail, SMS или WhatsApp по поводу этого предложения, напоминаний о бронировании и новостей. Я могу отписаться в любое время.", "Accetto che Athens View mi contatti via e-mail, SMS o WhatsApp per questa offerta, promemoria di prenotazione e aggiornamenti occasionali. Posso annullare l’iscrizione in qualsiasi momento.", "Ich bin einverstanden, dass Athens View mich per E-Mail, SMS oder WhatsApp zu diesem Angebot, Buchungserinnerungen und gelegentlichen Neuigkeiten kontaktiert. Ich kann mich jederzeit abmelden.", "我同意 Athens View 通过邮件、短信或 WhatsApp 向我发送此优惠、预订提醒和不定期的资讯。我可以随时退订。"],
+    ["Get my code", "Получить код", "Ottieni il mio codice", "Meinen Code erhalten", "获取我的优惠码"],
+    ["Offer terms", "Условия предложения", "Termini dell’offerta", "Angebotsbedingungen", "优惠条款"],
+    ["Your code", "Ваш код", "Il tuo codice", "Ihr Code", "您的优惠码"],
+    ["You’re in", "Готово", "Ci sei", "Sie sind dabei", "订阅成功"],
+    ["Plan my stay", "Спланировать поездку", "Pianifica il soggiorno", "Aufenthalt planen", "规划我的行程"],
+    ["Close", "Закрыть", "Chiudi", "Schließen", "关闭"],
+    ["Please enter a valid email address or phone number.", "Введите корректный e-mail или номер телефона.", "Inserisci un indirizzo e-mail o un numero di telefono valido.", "Bitte geben Sie eine gültige E-Mail-Adresse oder Telefonnummer ein.", "请输入有效的邮箱或电话号码。"],
+    ["Please tick the box to agree to be contacted.", "Отметьте галочкой согласие на связь с вами.", "Spunta la casella per accettare di essere contattato.", "Bitte setzen Sie das Häkchen, um der Kontaktaufnahme zuzustimmen.", "请勾选同意被联系。"],
+    ["Discount code (optional)", "Промокод (по желанию)", "Codice sconto (facoltativo)", "Rabattcode (optional)", "优惠码（选填）"],
     ["Install the Athens View app", "Установить приложение Athens View", "Installa l’app Athens View", "Athens View App installieren", "安装 Athens View 应用"],
     ["You are offline – showing saved pages", "Нет сети – показаны сохранённые страницы", "Sei offline – pagine salvate", "Sie sind offline – gespeicherte Seiten", "当前离线，显示已保存的页面"],
     ["This page drifted out to sea", "Эта страница уплыла в море", "Questa pagina è andata alla deriva", "Diese Seite ist aufs Meer hinausgetrieben", "这个页面漂到海上去了"]
@@ -238,6 +274,20 @@
         zh: ['抱歉，' + room + ' 在部分日期已订满。', altN ? altN + ' 在您所选日期仍有空房。' : '请尝试其他日期。']
       }[l];
       return T2[0] + T2[1];
+    }],
+    [/^★ ([\d.]+) on Google(?: · (\d+) reviews)?$/, function (l, m) {
+      var on = { ru: 'в Google', it: 'su Google', de: 'bei Google', zh: '谷歌评分' }[l], rv = { ru: 'отзывов', it: 'recensioni', de: 'Bewertungen', zh: '条评价' }[l];
+      return '★ ' + m[1] + ' ' + on + (m[2] ? ' · ' + m[2] + ' ' + rv : '');
+    }],
+    [/^(\d+)% off your first direct stay$/, function (l, m) {
+      return { ru: 'Скидка ' + m[1] + '% на первое прямое бронирование', it: m[1] + '% di sconto sul primo soggiorno diretto', de: m[1] + ' % Rabatt auf Ihren ersten Direktaufenthalt', zh: '首次直接预订立减 ' + m[1] + '%' }[l];
+    }],
+    [/^Leave your email or WhatsApp number and we’ll show you your code straight away\. Valid until (.+)\.$/, function (l, m) {
+      return { ru: 'Оставьте e-mail или номер WhatsApp – мы сразу покажем ваш код. Действует до ' + m[1] + '.', it: 'Lascia la tua e-mail o il tuo numero WhatsApp e ti mostreremo subito il codice. Valido fino al ' + m[1] + '.', de: 'Hinterlassen Sie Ihre E-Mail oder WhatsApp-Nummer – wir zeigen Ihnen sofort Ihren Code. Gültig bis ' + m[1] + '.', zh: '留下您的邮箱或 WhatsApp 号码，我们立即显示您的优惠码。有效期至 ' + m[1] + '。' }[l];
+    }],
+    [/^(?:Thank you! We’ve saved your details and will send a welcome message soon\. )?Quote this code when you book – valid until (.+)\.$/, function (l, m) {
+      var saved = /^Thank you!/.test(m.input), pre = saved ? { ru: 'Спасибо! Мы сохранили ваши данные и скоро пришлём приветственное сообщение. ', it: 'Grazie! Abbiamo salvato i tuoi dati e ti invieremo presto un messaggio di benvenuto. ', de: 'Vielen Dank! Wir haben Ihre Angaben gespeichert und senden Ihnen bald eine Willkommensnachricht. ', zh: '谢谢！我们已保存您的信息，稍后会发送欢迎消息。' }[l] : '';
+      return pre + { ru: 'Укажите этот код при бронировании – действует до ' + m[1] + '.', it: 'Indica questo codice quando prenoti – valido fino al ' + m[1] + '.', de: 'Nennen Sie diesen Code bei der Buchung – gültig bis ' + m[1] + '.', zh: '预订时请出示此优惠码，有效期至 ' + m[1] + '。' }[l];
     }],
     [/^Sleeps (\d+)$/, function (l, m) { return l === 'ru' ? 'Вмещает ' + m[1] : l === 'it' ? 'Ospita ' + m[1] : l === 'de' ? 'Für ' + m[1] + ' Gäste' : '可住 ' + m[1] + ' 人'; }]
   ];
@@ -308,7 +358,10 @@
 
   function build(cls, id) {
     var s = document.createElement('select'); s.className = 'av-lang ' + cls; s.setAttribute('aria-label', 'Language'); s.setAttribute('data-no-i18n', '');
-    s.innerHTML = LANGS.map(function (x) { return '<option value="' + x[0] + '" lang="' + x[0] + '">' + x[1] + '</option>'; }).join('');
+    /* the header selector shows short codes to save space; the mobile menu shows full names */
+    var short = cls === 'av-lang-desk', codes = { en: 'EN', ru: 'RU', it: 'IT', de: 'DE', zh: '中文' };
+    s.innerHTML = LANGS.map(function (x) { return '<option value="' + x[0] + '" lang="' + x[0] + '" title="' + x[1] + '">' + (short ? codes[x[0]] : x[1]) + '</option>'; }).join('');
+    if (short) s.setAttribute('title', 'Language');
     s.addEventListener('change', function () { setLang(s.value, true); });
     return s;
   }

@@ -16,7 +16,8 @@ window.AV = {
     transferTime: '35 min',               // speedboat from Velana Int'l Airport – confirm with your operator
     transferPrice: 35,                    // USD per person, each way
     currency: '$',
-    rating: '4.9',
+    // Real Google review score and count (nothing is shown while these are empty).
+    googleRating: '3.8', googleReviews: '65',   // from the 3 Nov audit (Google Maps) – re-check before the final site goes live
     rateNote: 'All rates include breakfast, tax & green fee',
     // Optional: paste a Formspree / Getform endpoint (https://formspree.io/f/xxxx) to ALSO receive
     // bookings & enquiries by email in the background. Leave '' to use WhatsApp / mailto only.
@@ -53,24 +54,44 @@ window.AV = {
   },
 
   /* ---- PACKAGES -------------------------------------------------------------------------------------
-     Bundles that pre-fill the booking form. `discount` is the % taken off room + excursions + transfer.
-     room / excursions use the ids from the lists above. PLACEHOLDER discounts. */
+     Shown as "what's included" + a Contact us button (WhatsApp / email). No prices or discounts are shown or
+     calculated – we confirm the price with the guest. room / excursions use the ids from the lists above. */
   packages: [
-    { id: 'escape', name: 'Island Escape', icon: 'beach_access', nights: 3, room: 'deluxe', excursions: ['dolphin', 'turtle'], transfer: 'both', discount: 10,
-      tagline: 'The perfect first taste of Guraidhoo.', guests: 2 },
-    { id: 'sunset', name: 'Sunset Romance', icon: 'wb_twilight', nights: 2, room: 'deluxe', excursions: ['dolphin'], transfer: 'both', discount: 8,
-      tagline: 'Two nights, one golden-hour dhoni cruise.', guests: 2 },
-    { id: 'family', name: 'Family Adventure', icon: 'group', nights: 4, room: 'family', excursions: ['sandbank', 'shark'], transfer: 'both', discount: 12,
-      tagline: 'Space for four, sandbank picnic and sharks.', guests: 4 }
+    { id: 'sunset', name: 'Sunset Romance', icon: 'wb_twilight', nights: 2, room: 'deluxe', excursions: ['dolphin'], transfer: 'both',
+      tagline: 'Two nights, one golden-hour dhoni cruise.' },
+    { id: 'escape', name: 'Island Escape', icon: 'beach_access', nights: 3, room: 'deluxe', excursions: ['dolphin', 'turtle'], transfer: 'both',
+      tagline: 'The perfect first taste of Guraidhoo.' },
+    { id: 'family', name: 'Family Adventure', icon: 'group', nights: 4, room: 'family', excursions: ['sandbank', 'shark'], transfer: 'both',
+      tagline: 'Space for four, sandbank picnic and sharks.' },
+    { id: 'week', name: 'Island Week', icon: 'explore', nights: 7, room: 'deluxe', excursions: ['shark', 'turtle', 'sandbank', 'dolphin'], transfer: 'both',
+      tagline: 'A full week to slow down and explore the atoll.' }
   ],
+
+  /* ---- SIGN-UP OFFER (pop-up) -----------------------------------------------------------------------
+     A pop-up shows once per visitor after `delaySeconds`, or when a desktop visitor moves to leave the page.
+     It asks for an email or phone number plus consent, then shows the code. The details are sent to
+     `config.formEndpoint` (see README – this is where you receive the leads).
+     PLACEHOLDER values – set the real percentage, code, expiry date and terms with your lecturer / owner. */
+  signup: {
+    enabled: true,
+    delaySeconds: 25,
+    percent: 10,
+    code: 'ISLAND10',
+    expires: '2027-06-30',          // YYYY-MM-DD – the pop-up hides itself after this date
+    terms: [
+      'Valid on room rates for direct bookings made through this website, WhatsApp or email.',
+      'One code per guest. It cannot be combined with other offers.',
+      'Subject to availability. Reception applies the discount when we confirm your booking.',
+      'The code must be quoted when you book and is valid for stays booked before the expiry date.'
+    ]
+  },
 
   /* ---- REVIEWS --------------------------------------------------------------------------------------
      Only add REAL guest reviews. `source` (e.g. 'Google', 'TripAdvisor', 'Booking.com') and `url` are optional
-     and, when given, are shown as a link back to the original review. The entry below is a PLACEHOLDER –
-     replace it before launch. If this list is empty the reviews block is hidden. */
+     and, when given, are shown as a link back to the original review. If this list is empty the whole reviews
+     block is hidden. */
   reviews: [
-    { name: 'Sarah & Mark', country: 'United Kingdom', stars: 5, source: '', url: '',
-      text: 'Athens View gave us the dream Maldives trip without the resort price tag. Staff feels like family!' }
+    // { name: 'Guest name', country: 'Country', stars: 5, source: 'Google', url: 'https://…', text: 'Their real review.' }
   ],
 
   /* ---- CLIMATE (approximate long-term averages for the Kaafu Atoll) -------------------------------- */

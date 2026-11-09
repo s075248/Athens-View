@@ -15,15 +15,12 @@
   var s = U.getSearch();
   var q = new URLSearchParams(location.search);
   var preExc = (q.get('exc') || '').split(',').filter(Boolean);
-  var pkg = q.get('pkg') ? U.byId(AV.packages || [], q.get('pkg')) : null;
-  if (pkg) preExc = pkg.excursions.slice();
   var today = U.iso(new Date());
 
   /* ---- build room options + excursion checklist ---- */
   var roomSel = $('[name=room]', form);
   roomSel.innerHTML = AV.rooms.map(function (r) { return '<option value="' + r.id + '">' + esc(r.name.replace('Ocean View ', '')) + ' · ' + money(r.price) + '</option>'; }).join('');
   roomSel.value = (q.get('room') && U.byId(AV.rooms, q.get('room'))) ? q.get('room') : (U.byId(AV.rooms, s.room) ? s.room : AV.rooms[0].id);
-  if (pkg) roomSel.value = pkg.room;
 
   $('#exc-list').innerHTML = AV.excursions.map(function (x) {
     return '<label class="flex items-center gap-space-md p-space-sm rounded-2xl bg-surface-pure border border-primary/10 hover:border-primary/40 cursor-pointer transition-colors has-[:checked]:border-bougainvillea-primary has-[:checked]:bg-sand-whisper">' +
@@ -36,8 +33,6 @@
   /* ---- initial values ---- */
   var ci = $('[name=checkin]', form), co = $('[name=checkout]', form), gu = $('[name=guests]', form);
   ci.min = today; ci.value = s.checkin; co.min = U.iso(U.addDays(U.fromIso(s.checkin), 1)); co.value = s.checkout; gu.value = String(s.guests);
-  if (pkg) { if (!q.get('guests')) gu.value = String(Math.min(8, pkg.guests)); co.value = U.iso(U.addDays(U.fromIso(ci.value), pkg.nights)); $('[name=transfer]', form).value = pkg.transfer; }
-
   /* ---- quote ---- */
   function quote() {
     var room = U.byId(AV.rooms, roomSel.value), guests = Math.max(1, parseInt(gu.value, 10) || 1);
@@ -50,10 +45,8 @@
     excs.forEach(function (x) { var a = x.price * guests; total += a; base += a; lines.push({ label: x.name, sub: guests + ' guest' + (guests > 1 ? 's' : '') + ' × ' + money(x.price), amt: a }); });
     var tr = $('[name=transfer]', form).value, trN = TRANSFER[tr];
     if (trN) { var ta = C.transferPrice * guests * trN; total += ta; base += ta; lines.push({ label: 'Speedboat transfer', sub: TRANSFER_LABEL[tr] + ' · ' + guests + ' guest' + (guests > 1 ? 's' : ''), amt: ta }); }
-    var pkgOn = pkg && nights >= pkg.nights;
-    if (pkgOn) { var d = -Math.round(base * pkg.discount / 100); total += d; lines.push({ label: 'Package: ' + pkg.name, sub: pkg.discount + '% off stay, excursions & transfer', amt: d }); }
     var conflict = nights > 0 && U.isBooked(room.id, ci.value, co.value);
-    return { room: room, guests: guests, nights: nights, rooms: rooms, excs: excs, transfer: tr, lines: lines, total: total, pkg: pkgOn ? pkg : null, conflict: conflict };
+    return { room: room, guests: guests, nights: nights, rooms: rooms, excs: excs, transfer: tr, lines: lines, total: total, conflict: conflict };
   }
 
   /* ---- availability notice + calendar ---- */
@@ -100,18 +93,17 @@
       aw.textContent = qd.conflict ? 'Sorry – ' + qd.room.name + ' is already booked for some of these nights.' + (alt && qd.nights > 0 ? ' ' + alt.name + ' is free for your dates.' : ' Please try other dates.') : '';
       aw.classList.toggle('hidden', !qd.conflict);
     }
-    var pb = $('#pkg-banner');
-    if (pb) {
-      pb.classList.toggle('hidden', !pkg);
-      if (pkg) pb.innerHTML = '<span class="material-symbols-outlined text-[20px]">' + esc(pkg.icon || 'redeem') + '</span><span class="flex-1"><b>' + esc(pkg.name) + '</b> package · ' + pkg.nights + ' nights · ' + pkg.discount + '% off' + (qd.pkg ? '' : ' <em>(needs at least ' + pkg.nights + ' nights)</em>') + '</span><button type="button" data-pkg-remove class="underline">Remove</button>';
+    var cn = $('#code-note'), cv = field('discount').toUpperCase(), S = AV.signup;
+    if (cn) {
+      if (!cv) cn.textContent = '';
+      else if (S && cv === String(S.code).toUpperCase() && (!S.expires || today <= S.expires)) cn.textContent = 'Code noted – our reception applies it when we confirm your booking.';
+      else cn.textContent = 'We don’t recognise that code (it may have expired) – we’ll double-check when we confirm.';
     }
     renderCal(qd.room);
     U.saveSearch({ checkin: ci.value, checkout: co.value, guests: qd.guests, room: qd.room.id });
   }
-  var pbEl = $('#pkg-banner');
-  if (pbEl) pbEl.addEventListener('click', function (e) { if (!e.target.closest('[data-pkg-remove]')) return; pkg = null; try { history.replaceState(null, '', location.pathname); } catch (er) {} render(); });
 
-  ci.addEventListener('change', function () { var min = U.iso(U.addDays(U.fromIso(ci.value || today), 1)); co.min = min; if (pkg && ci.value) co.value = U.iso(U.addDays(U.fromIso(ci.value), pkg.nights)); else if (!co.value || co.value < min) co.value = min; render(); });
+  ci.addEventListener('change', function () { var min = U.iso(U.addDays(U.fromIso(ci.value || today), 1)); co.min = min; if (!co.value || co.value < min) co.value = min; render(); });
   form.addEventListener('change', render); form.addEventListener('input', function (e) { if (e.target === gu) render(); });
   $$('[data-step]').forEach(function (b) { b.addEventListener('click', function () { var v = (parseInt(gu.value, 10) || 1) + parseInt(b.dataset.step, 10); gu.value = Math.max(1, Math.min(8, v)); render(); }); });
 
@@ -139,12 +131,12 @@
       '*Guests:* ' + qd.guests, '*Room:* ' + qd.rooms + ' × ' + qd.room.name,
       qd.excs.length ? '*Excursions:* ' + qd.excs.map(function (x) { return x.name; }).join(', ') : '',
       '*Transfer:* ' + TRANSFER_LABEL[qd.transfer],
-      qd.pkg ? '*Package:* ' + qd.pkg.name + ' (' + qd.pkg.discount + '% off)' : '',
+      field('discount') ? '*Discount code:* ' + field('discount').toUpperCase() + ' (to be applied by reception)' : '',
       field('arrival') ? '*Arrival details:* ' + field('arrival') : '', field('notes') ? '*Notes:* ' + field('notes') : '',
       '', '*Estimated total:* ' + money(qd.total) + ' (' + C.rateNote.toLowerCase() + ')'].filter(function (l, i, a) { return l !== '' || (a[i - 1] !== ''); });
     var text = lines.join('\n');
 
-    var record = { ref: r, at: new Date().toISOString(), name: field('name'), email: field('email'), phone: field('phone'), checkin: field('checkin'), checkout: field('checkout'), guests: qd.guests, room: qd.room.id, rooms: qd.rooms, excursions: qd.excs.map(function (x) { return x.id; }), transfer: qd.transfer, total: qd.total, pkg: qd.pkg ? qd.pkg.id : '' };
+    var record = { ref: r, at: new Date().toISOString(), name: field('name'), email: field('email'), phone: field('phone'), checkin: field('checkin'), checkout: field('checkout'), guests: qd.guests, room: qd.room.id, rooms: qd.rooms, excursions: qd.excs.map(function (x) { return x.id; }), transfer: qd.transfer, total: qd.total, discountCode: field('discount').toUpperCase() };
     try { var all = JSON.parse(localStorage.getItem('av_bookings') || '[]'); all.unshift(record); localStorage.setItem('av_bookings', JSON.stringify(all.slice(0, 10))); } catch (er) {}
     U.track('booking-submitted');
     var sent = $('#conf-sent');
