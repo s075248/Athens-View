@@ -15,9 +15,70 @@
   var fromIso = function (s) { var p = (s || '').split('-'); return p.length === 3 ? new Date(+p[0], +p[1] - 1, +p[2]) : null; };
   var addDays = function (d, n) { var x = new Date(d.getTime()); x.setDate(x.getDate() + n); return x; };
   var nightsBetween = function (a, b) { var A = fromIso(a), B = fromIso(b); return A && B ? Math.round((B - A) / 864e5) : 0; };
-  var prettyDate = function (s) { var d = fromIso(s); return d ? d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '—'; };
+  var prettyDate = function (s) { var d = fromIso(s); return d ? d.toLocaleDateString(AV.locale || 'en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '—'; };
   var byId = function (list, id) { for (var i = 0; i < list.length; i++) if (list[i].id === id) return list[i]; return null; };
   var wa = function (text) { return 'https://wa.me/' + C.whatsapp + '?text=' + encodeURIComponent(text); };
+
+  /* ---------- optional privacy-friendly analytics (GoatCounter) ---------- */
+  function track(name) {
+    try { if (window.goatcounter && window.goatcounter.count) window.goatcounter.count({ path: 'event/' + name, title: name, event: true }); } catch (e) {}
+  }
+  function initAnalytics() {
+    if (!C.goatcounter) return;
+    var sc = document.createElement('script');
+    sc.async = true; sc.src = 'https://gc.zgo.at/count.js';
+    sc.setAttribute('data-goatcounter', 'https://' + C.goatcounter + '.goatcounter.com/count');
+    document.head.appendChild(sc);
+    $$('[data-analytics-note]').forEach(function (n) { n.classList.remove('hidden'); });
+    document.addEventListener('click', function (e) {
+      var a = e.target.closest && e.target.closest('a[href]'); if (!a) return;
+      var h = a.getAttribute('href') || '';
+      if (h.indexOf('wa.me/') > -1) track('whatsapp-click');
+      else if (h.indexOf('tel:') === 0) track('call-click');
+      else if (h.indexOf('mailto:') === 0) track('email-click');
+      else if (/booking\.html/.test(h)) track('book-click');
+    });
+  }
+
+  /* ---------- seasonal pricing + availability ---------- */
+  function seasonOn(d) {
+    var md = pad(d.getMonth() + 1) + '-' + pad(d.getDate()), list = AV.seasons || [];
+    for (var i = 0; i < list.length; i++) for (var j = 0; j < list[i].ranges.length; j++) {
+      var a = list[i].ranges[j][0], b = list[i].ranges[j][1];
+      if (a <= b ? (md >= a && md <= b) : (md >= a || md <= b)) return list[i];
+    }
+    return null;
+  }
+  function nightRate(room, d) {
+    var s = seasonOn(d), rate = room.price;
+    if (s) rate = (room.rates && room.rates[s.id] != null) ? room.rates[s.id] : Math.round(room.price * s.multiplier);
+    return { rate: rate, season: s };
+  }
+  /* cost of ONE room for the stay, with a per-season breakdown */
+  function stayCost(room, ci, co) {
+    var a = fromIso(ci), n = nightsBetween(ci, co), total = 0, by = {}, order = [];
+    for (var i = 0; i < n; i++) {
+      var r = nightRate(room, addDays(a, i)), id = r.season ? r.season.id : 'std';
+      total += r.rate;
+      if (!by[id]) { by[id] = { season: r.season, rate: r.rate, nights: 0 }; order.push(id); }
+      by[id].nights++;
+    }
+    return { nights: n, total: total, parts: order.map(function (id) { return by[id]; }) };
+  }
+  function lowestRate(room) {
+    var min = room.price;
+    (AV.seasons || []).forEach(function (s) { var r = (room.rates && room.rates[s.id] != null) ? room.rates[s.id] : Math.round(room.price * s.multiplier); if (r < min) min = r; });
+    return min;
+  }
+  function seasonNote(parts) {
+    return parts.map(function (p) { return p.nights + ' × ' + money(p.rate) + (p.season ? ' ' + p.season.label.toLowerCase() : ''); }).join(' + ');
+  }
+  var bookedExtra = {};   /* merged in from config.bookedFeed */
+  function bookedRanges(roomId) { return ((AV.booked || {})[roomId] || []).concat(bookedExtra[roomId] || []); }
+  function isBooked(roomId, ci, co) {
+    return bookedRanges(roomId).some(function (r) { return ci < r[1] && co > r[0]; });
+  }
+  function hasBookings() { return AV.rooms.some(function (r) { return bookedRanges(r.id).length > 0; }); }
 
   /* ---------- search state (shared between pages) ---------- */
   function defaults() {
@@ -76,9 +137,12 @@
     var n = nightsBetween(s.checkin, s.checkout), fits = s.guests <= room.maxGuests, need = Math.ceil(s.guests / room.maxGuests);
     var total = '';
     if (opts.showTotal && n > 0) {
+      var sc = stayCost(room, s.checkin, s.checkout), gone = isBooked(room.id, s.checkin, s.checkout);
       total = '<div class="mt-space-sm px-space-md py-space-xs rounded-xl bg-sand-whisper text-primary font-label-md text-label-md flex flex-wrap items-center justify-between gap-1">' +
         '<span>' + n + ' night' + (n > 1 ? 's' : '') + ' · ' + prettyDate(s.checkin) + ' → ' + prettyDate(s.checkout) + '</span>' +
-        '<span class="font-title-md text-title-md">' + money(room.price * n * need) + ' total' + (need > 1 ? ' (' + need + ' rooms)' : '') + '</span></div>' +
+        '<span class="font-title-md text-title-md">' + money(sc.total * need) + ' total' + (need > 1 ? ' (' + need + ' rooms)' : '') + '</span></div>' +
+        (sc.parts.length && sc.parts[0].season ? '<p class="mt-1 font-label-sm text-label-sm text-on-surface-variant">' + esc(seasonNote(sc.parts)) + ' per night' + (need > 1 ? ' per room' : '') + '</p>' : '') +
+        (gone ? '<p class="mt-1 font-label-sm text-label-sm text-bougainvillea-primary flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">event_busy</span>Not available for these dates – try other dates or the other room.</p>' : '') +
         (!fits ? '<p class="mt-1 font-label-sm text-label-sm text-bougainvillea-primary">Sleeps up to ' + room.maxGuests + ' — we\'ve priced ' + need + ' rooms for ' + s.guests + ' guests.</p>' : '');
     }
     return '<article class="rounded-3xl bg-surface-pure shadow-xl overflow-hidden flex flex-col group transition-all duration-300 hover:-translate-y-1 border border-primary/5" data-room="' + room.id + '">' +
@@ -86,7 +150,7 @@
       '<img loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out" src="' + room.images[0] + '" alt="' + esc(room.name) + ' interior"/>' +
       '<span class="absolute top-space-md left-space-md px-space-md py-1 rounded-full ' + (room.badgeStyle === 'magenta' ? 'bg-bougainvillea-primary' : 'bg-primary-container') + ' text-on-primary font-label-sm text-label-sm shadow-md">' + esc(room.badge) + '</span>' +
       '<button type="button" data-room-details="' + room.id + '" class="absolute bottom-space-md right-space-md flex items-center gap-1 px-space-sm py-1 rounded-full bg-inverse-surface/80 backdrop-blur-md text-surface-pure font-label-sm text-label-sm"><span class="material-symbols-outlined text-[16px]">photo_camera</span><span>' + room.photos + ' Photos</span></button>' +
-      '<div class="absolute bottom-space-md left-space-md px-space-md py-1.5 rounded-xl bg-surface-pure/95 backdrop-blur-md shadow-md text-primary"><span class="font-headline-sm text-headline-sm font-bold">' + money(room.price) + '</span><span class="font-label-sm text-label-sm text-on-surface-variant"> / night</span></div></div>' +
+      '<div class="absolute bottom-space-md left-space-md px-space-md py-1.5 rounded-xl bg-surface-pure/95 backdrop-blur-md shadow-md text-primary"><span class="font-label-sm text-label-sm text-on-surface-variant">' + (lowestRate(room) < room.price ? 'from ' : '') + '</span><span class="font-headline-sm text-headline-sm font-bold">' + money(lowestRate(room)) + '</span><span class="font-label-sm text-label-sm text-on-surface-variant"> / night</span></div></div>' +
       '<div class="p-space-lg md:p-space-xl flex flex-col flex-1 justify-between"><div>' +
       '<div class="flex items-center justify-between gap-space-sm mb-space-xs"><h3 class="font-headline-sm md:font-headline-md text-headline-sm md:text-headline-md text-primary">' + esc(room.name) + '</h3>' +
       '<div class="flex items-center gap-1 text-secondary font-label-sm text-label-sm shrink-0"><span class="material-symbols-outlined text-[18px]">square_foot</span><span>' + room.size + ' m²</span></div></div>' +
@@ -114,15 +178,22 @@
       '<span class="w-10 h-10 rounded-full bg-surface-pure/20 group-hover:bg-surface-pure group-hover:text-primary backdrop-blur-md text-surface-pure flex items-center justify-center transition-all"><span class="material-symbols-outlined text-[20px]">arrow_forward</span></span></div></div></article>';
   }
 
+  function rateTable(room) {
+    if (!(AV.seasons || []).length) return '';
+    return '<div class="av-rates mt-space-sm">' + AV.seasons.map(function (se) {
+      var r = (room.rates && room.rates[se.id] != null) ? room.rates[se.id] : Math.round(room.price * se.multiplier);
+      return '<span class="av-rate-chip"><b>' + esc(se.label) + '</b> ' + money(r) + '</span>'; }).join('') + '</div>';
+  }
+
   /* ---------- modals content ---------- */
   function roomModal(room) {
-    var s = getSearch();
+    var s = getSearch(); AV.lightboxSet = room.images;
     var thumbs = room.images.map(function (src, i) { return '<button type="button" data-thumb="' + i + '" class="w-20 h-14 rounded-lg overflow-hidden border-2 ' + (i ? 'border-transparent' : 'border-bougainvillea-primary') + '"><img class="w-full h-full object-cover" src="' + src + '" alt="' + esc(room.name) + ' photo ' + (i + 1) + '"/></button>'; }).join('');
-    openModal('<div class="relative"><img id="modal-main" class="w-full h-64 md:h-96 object-cover bg-primary/10" src="' + room.images[0] + '" alt="' + esc(room.name) + '"/>' +
+    openModal('<div class="relative"><img id="modal-main" data-lightbox="room" class="w-full h-64 md:h-96 object-cover bg-primary/10" src="' + room.images[0] + '" alt="' + esc(room.name) + '"/>' +
       '<button type="button" data-close-modal aria-label="Close" class="absolute top-space-md right-space-md w-10 h-10 rounded-full bg-surface-pure/90 text-primary flex items-center justify-center shadow-md"><span class="material-symbols-outlined">close</span></button>' +
       '<div class="absolute bottom-space-sm left-space-md flex gap-space-xs">' + thumbs + '</div></div>' +
       '<div class="p-space-lg md:p-space-xl"><div class="flex flex-wrap items-start justify-between gap-space-sm"><div><span class="font-label-sm text-label-sm text-secondary uppercase tracking-widest">' + esc(room.badge) + '</span>' +
-      '<h3 class="font-headline-md text-headline-md text-primary">' + esc(room.name) + '</h3></div><div class="text-right"><span class="font-headline-md text-headline-md text-primary font-bold">' + money(room.price) + '</span><span class="font-label-md text-label-md text-on-surface-variant"> / night</span><p class="font-label-sm text-label-sm text-on-surface-variant">' + C.rateNote + '</p></div></div>' +
+      '<h3 class="font-headline-md text-headline-md text-primary">' + esc(room.name) + '</h3></div><div class="text-right"><span class="font-label-md text-label-md text-on-surface-variant">' + (lowestRate(room) < room.price ? 'from ' : '') + '</span><span class="font-headline-md text-headline-md text-primary font-bold">' + money(lowestRate(room)) + '</span><span class="font-label-md text-label-md text-on-surface-variant"> / night</span><p class="font-label-sm text-label-sm text-on-surface-variant">' + C.rateNote + '</p></div></div>' + rateTable(room) +
       '<p class="mt-space-sm font-body-md text-body-md text-on-surface-variant leading-relaxed">' + esc(room.desc) + '</p>' +
       '<div class="mt-space-md grid grid-cols-2 md:grid-cols-3 gap-space-sm"><div class="flex items-center gap-space-xs font-body-sm text-body-sm"><span class="material-symbols-outlined text-primary text-[18px]">square_foot</span>' + room.size + ' m²</div><div class="flex items-center gap-space-xs font-body-sm text-body-sm"><span class="material-symbols-outlined text-primary text-[18px]">group</span>Sleeps ' + room.maxGuests + '</div>' +
       room.features.map(function (f) { return '<div class="flex items-center gap-space-xs font-body-sm text-body-sm"><span class="material-symbols-outlined ' + (f.accent ? 'text-bougainvillea-primary' : 'text-primary') + ' text-[18px]">' + f.icon + '</span>' + f.label + '</div>'; }).join('') + '</div>' +
@@ -132,8 +203,8 @@
   }
 
   function excModal(x) {
-    var s = getSearch();
-    openModal('<div class="relative"><img class="w-full h-64 md:h-80 object-cover bg-primary/10" src="' + x.images[0] + '" alt="' + esc(x.name) + '"/>' +
+    var s = getSearch(); AV.lightboxSet = x.images;
+    openModal('<div class="relative"><img data-lightbox="exc" class="w-full h-64 md:h-80 object-cover bg-primary/10" src="' + x.images[0] + '" alt="' + esc(x.name) + '"/>' +
       '<button type="button" data-close-modal aria-label="Close" class="absolute top-space-md right-space-md w-10 h-10 rounded-full bg-surface-pure/90 text-primary flex items-center justify-center shadow-md"><span class="material-symbols-outlined">close</span></button></div>' +
       '<div class="p-space-lg md:p-space-xl"><div class="flex flex-wrap items-start justify-between gap-space-sm"><div><span class="font-label-sm text-label-sm text-lagoon-cyan uppercase tracking-widest">' + esc(x.area) + '</span><h3 class="font-headline-md text-headline-md text-primary">' + esc(x.name) + '</h3></div>' +
       '<div class="text-right"><span class="font-headline-md text-headline-md text-primary font-bold">' + money(x.price) + '</span><span class="font-label-md text-label-md text-on-surface-variant"> / person</span></div></div>' +
@@ -295,9 +366,9 @@
   }
 
   /* expose for booking.js */
-  AV.util = { $: $, $$: $$, esc: esc, money: money, iso: iso, fromIso: fromIso, addDays: addDays, nightsBetween: nightsBetween, prettyDate: prettyDate, byId: byId, wa: wa, toast: toast, getSearch: getSearch, saveSearch: saveSearch, qs: qs, postJson: postJson, openModal: openModal, closeModal: closeModal };
+  AV.util = { track: track, seasonOn: seasonOn, nightRate: nightRate, stayCost: stayCost, lowestRate: lowestRate, seasonNote: seasonNote, isBooked: isBooked, bookedRanges: bookedRanges, hasBookings: hasBookings, setBookedExtra: function (o) { bookedExtra = o || {}; }, mountRooms: function () { mountRooms(); }, openModal: openModal, roomModal: roomModal, $: $, $$: $$, esc: esc, money: money, iso: iso, fromIso: fromIso, addDays: addDays, nightsBetween: nightsBetween, prettyDate: prettyDate, byId: byId, wa: wa, toast: toast, getSearch: getSearch, saveSearch: saveSearch, qs: qs, postJson: postJson, openModal: openModal, closeModal: closeModal };
 
   document.addEventListener('DOMContentLoaded', function () {
-    initChrome(); initSearch(); mountRooms(); mountExcursions(); mountGallery(); mountFaq(); initContactForm(); initNewsletter(); initWaForms();
+    initAnalytics(); initChrome(); initSearch(); mountRooms(); mountExcursions(); mountGallery(); mountFaq(); initContactForm(); initNewsletter(); initWaForms();
   });
 })();

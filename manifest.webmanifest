@@ -1,0 +1,20 @@
+{
+  "name": "Athens View Maldives",
+  "short_name": "Athens View",
+  "description": "Boutique guest house on Guraidhoo island, Kaafu Atoll, Maldives. Rooms, excursions, dining and direct booking.",
+  "start_url": "index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F4FAFF",
+  "theme_color": "#0A4D68",
+  "icons": [
+    { "src": "assets/img/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "assets/img/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "assets/img/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Book your stay", "url": "booking.html" },
+    { "name": "Getting here", "url": "location.html#getting-here" }
+  ]
+}

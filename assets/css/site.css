@@ -73,3 +73,140 @@ input[type="date"]::-webkit-calendar-picker-indicator { opacity: .6; cursor: poi
 
 /* the design uses a hidden scrollbar */
 ::-webkit-scrollbar { width: 0; height: 0; }
+
+/* ==========================================================================
+   Feature components (packages, availability, reviews, photo viewer, climate,
+   language switcher, install/offline). Colours match the design tokens.
+   ========================================================================== */
+:root { --av-primary: #00354a; --av-secondary: #805521; --av-magenta: #d81b60; --av-magenta-d: #b8154f; --av-cyan: #05bfdb; --av-sand: #fbf8f1; --av-low: #ecf5fc; --av-mute: #41484d; --av-line: rgba(0,53,74,.1); }
+
+/* seasonal rate chips (room modal) */
+.av-rates { display: flex; flex-wrap: wrap; gap: .5rem; }
+.av-rate-chip { padding: .25rem .75rem; border-radius: 9999px; background: var(--av-sand); color: var(--av-primary); font-size: .8125rem; border: 1px solid rgba(224,169,109,.35); }
+.av-rate-chip b { font-weight: 600; margin-right: .25rem; }
+img[data-lightbox] { cursor: zoom-in; }
+
+/* packages */
+.av-pkgs { display: grid; grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr)); gap: 1.25rem; }
+.av-pkg { position: relative; display: flex; flex-direction: column; gap: .5rem; padding: 1.5rem; border-radius: 1.5rem; background: #fff; border: 1px solid var(--av-line); box-shadow: 0 12px 32px -8px rgba(10,77,104,.14); transition: transform .25s ease; }
+.av-pkg:hover { transform: translateY(-4px); }
+.av-pkg-save { position: absolute; top: 1rem; right: 1rem; padding: .2rem .7rem; border-radius: 9999px; background: var(--av-magenta); color: #fff; font-size: .75rem; font-weight: 600; letter-spacing: .02em; }
+.av-pkg-ico { width: 3rem; height: 3rem; border-radius: 1rem; background: var(--av-low); color: var(--av-primary); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; }
+.av-pkg h3 { font-family: Outfit, sans-serif; font-size: 1.375rem; font-weight: 600; color: var(--av-primary); margin: .25rem 0 0; }
+.av-pkg-tag { color: var(--av-mute); font-size: .9375rem; margin: 0; }
+.av-pkg ul { list-style: none; margin: .5rem 0; padding: 0; display: grid; gap: .4rem; }
+.av-pkg li { display: flex; gap: .5rem; align-items: flex-start; font-size: .9rem; color: #1c2b33; }
+.av-pkg li .material-symbols-outlined { font-size: 1.125rem; color: var(--av-cyan); }
+.av-pkg-price { margin-top: auto; padding-top: .75rem; border-top: 1px dashed var(--av-line); color: var(--av-primary); }
+.av-pkg-price b { font-family: Outfit, sans-serif; font-size: 1.75rem; font-weight: 700; }
+.av-pkg-was { color: var(--av-mute); text-decoration: line-through; font-size: .95rem; margin-right: .25rem; }
+.av-pkg-price small { display: block; color: var(--av-mute); font-size: .8125rem; }
+.av-pkg-cta { display: block; text-align: center; padding: .85rem 1rem; border-radius: 9999px; background: var(--av-magenta); color: #fff; font-weight: 600; box-shadow: 0 8px 20px -4px rgba(216,27,96,.35); transition: background .2s, transform .2s; }
+.av-pkg-cta:hover { background: var(--av-magenta-d); transform: translateY(-2px); }
+.av-pkg-banner { display: flex; align-items: center; gap: .75rem; margin-top: 1rem; padding: .75rem 1rem; border-radius: 1rem; background: var(--av-sand); border: 1px solid rgba(224,169,109,.45); color: var(--av-primary); font-size: .9375rem; }
+.av-pkg-banner .material-symbols-outlined { color: var(--av-magenta); }
+.av-pkg-banner button { color: var(--av-magenta); font-weight: 600; }
+.av-pkg-banner.hidden { display: none; }
+
+/* availability calendar */
+.av-cal { margin-top: 1rem; padding: 1rem; border-radius: 1rem; background: var(--av-low); }
+.av-cal.hidden { display: none; }
+.av-cal-bar { display: flex; align-items: center; justify-content: space-between; gap: .5rem; margin-bottom: .75rem; color: var(--av-primary); font-weight: 600; font-size: .9375rem; }
+.av-cal-bar button { width: 2.25rem; height: 2.25rem; border-radius: 9999px; background: #fff; color: var(--av-primary); font-size: 1.25rem; line-height: 1; box-shadow: 0 1px 3px rgba(0,0,0,.12); }
+.av-cal-bar button:disabled { opacity: .35; cursor: default; }
+.av-cal-months { display: grid; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); gap: 1rem; }
+.av-cal-m > b { display: block; margin-bottom: .35rem; color: var(--av-primary); font-size: .875rem; }
+.av-cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; text-align: center; font-size: .75rem; }
+.av-cal-grid > span:not(.av-d) { color: var(--av-mute); font-weight: 600; padding-bottom: .15rem; }
+.av-d { display: block; padding: .3rem 0; border-radius: .4rem; background: #fff; color: var(--av-primary); }
+.av-d-past { opacity: .35; }
+.av-d-booked { background: #e6e9eb; color: #8a949a; text-decoration: line-through; }
+.av-d-sel { background: var(--av-cyan); color: #fff; }
+.av-d-booked.av-d-sel { background: var(--av-magenta); color: #fff; text-decoration: none; }
+.av-cal-key { display: flex; align-items: center; gap: .5rem; margin: .75rem 0 0; font-size: .75rem; color: var(--av-mute); }
+.av-cal-key .av-d { width: 1rem; padding: .5rem 0; }
+
+/* reviews */
+.av-reviews { display: grid; grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr)); gap: 1.25rem; }
+.av-review { position: relative; margin: 0; padding: 1.75rem; border-radius: 1.5rem; background: var(--av-sand); box-shadow: 0 12px 32px -8px rgba(10,77,104,.12); display: flex; flex-direction: column; gap: .6rem; }
+.av-rev-q { position: absolute; top: 1.25rem; right: 1.25rem; font-size: 2rem; color: rgba(5,191,219,.4); }
+.av-stars { display: flex; color: var(--av-secondary); }
+.av-stars .material-symbols-outlined { font-size: 1.25rem; opacity: .3; }
+.av-stars .icon-fill { opacity: 1; }
+.av-review blockquote { margin: 0; font-family: Outfit, sans-serif; font-size: 1.25rem; font-weight: 500; font-style: italic; color: var(--av-primary); line-height: 1.45; }
+.av-review figcaption { display: flex; flex-wrap: wrap; gap: .25rem .5rem; align-items: baseline; font-size: .9rem; color: var(--av-mute); }
+.av-review figcaption b { color: var(--av-primary); font-size: 1rem; }
+.av-review figcaption a { color: var(--av-magenta); text-decoration: underline; }
+.av-rev-links { display: flex; flex-wrap: wrap; gap: .75rem; margin-top: 1.25rem; justify-content: center; }
+.av-rev-link { display: inline-flex; align-items: center; gap: .35rem; padding: .6rem 1.1rem; border-radius: 9999px; border: 1.5px solid var(--av-primary); color: var(--av-primary); font-weight: 600; font-size: .9rem; }
+.av-rev-link:hover { background: var(--av-primary); color: #fff; }
+.av-rev-link .material-symbols-outlined { font-size: 1rem; }
+
+/* full-screen photo viewer */
+.av-lb { position: fixed; inset: 0; z-index: 110; display: none; align-items: center; justify-content: center; background: rgba(0,18,27,.94); touch-action: pan-y; }
+.av-lb.open { display: flex; }
+.av-lb img { max-width: 100vw; max-height: 86vh; object-fit: contain; user-select: none; -webkit-user-drag: none; }
+@media (min-width: 900px) { .av-lb img { max-width: 88vw; } }
+.av-lb button { position: absolute; display: flex; align-items: center; justify-content: center; width: 3rem; height: 3rem; border-radius: 9999px; background: rgba(255,255,255,.14); color: #fff; backdrop-filter: blur(6px); }
+.av-lb button:hover { background: rgba(255,255,255,.28); }
+.av-lb-x { top: 1rem; right: 1rem; }
+.av-lb-n { top: 50%; transform: translateY(-50%); }
+.av-lb-prev { left: .75rem; } .av-lb-next { right: .75rem; }
+.av-lb.single .av-lb-n { display: none; }
+.av-lb-c { position: absolute; bottom: 1.25rem; left: 50%; transform: translateX(-50%); color: #fff; font-size: .875rem; padding: .25rem .8rem; border-radius: 9999px; background: rgba(255,255,255,.14); }
+
+/* climate chart */
+.av-wx { list-style: none; margin: 0; padding: 0 0 .5rem; display: grid; grid-template-columns: repeat(12, minmax(3.1rem, 1fr)); gap: .4rem; overflow-x: auto; }
+.av-wx-m { display: flex; flex-direction: column; align-items: center; gap: .25rem; padding: .6rem .25rem; border-radius: 1rem; background: #fff; border: 1px solid var(--av-line); text-align: center; font-size: .8125rem; color: var(--av-mute); }
+.av-wx-m.now { outline: 2px solid var(--av-magenta); }
+.av-wx-m b { color: var(--av-primary); font-size: .9rem; }
+.av-wx-rain { font-size: .8125rem; color: var(--av-primary); font-weight: 600; } .av-wx-rain small { font-weight: 400; color: var(--av-mute); }
+.av-wx-barwrap { display: flex; align-items: flex-end; width: 100%; height: 5rem; justify-content: center; }
+.av-wx-bar { display: block; width: 1.1rem; border-radius: .5rem .5rem .2rem .2rem; background: var(--av-cyan); }
+.av-wx-m.dry .av-wx-bar { background: #f0b45a; }
+.av-wx-t { color: #b4551f; font-weight: 600; } .av-wx-s { color: #0a7a8a; font-weight: 600; }
+.av-wx-key { display: flex; flex-wrap: wrap; gap: .5rem 1.25rem; margin: .75rem 0 0; font-size: .8125rem; color: var(--av-mute); }
+.av-wx-key i { display: inline-block; width: .8rem; height: .8rem; border-radius: 50%; margin-right: .35rem; vertical-align: -1px; background: var(--av-cyan); }
+.av-wx-key i.dry { background: #f0b45a; }
+.av-season-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); gap: 1.25rem; margin-bottom: 1.5rem; }
+.av-season-card { padding: 1.5rem; border-radius: 1.5rem; background: #fff; border: 1px solid var(--av-line); box-shadow: 0 8px 24px -8px rgba(10,77,104,.12); }
+.av-season-card h3 { display: flex; align-items: center; gap: .5rem; font-family: Outfit, sans-serif; font-size: 1.25rem; font-weight: 600; color: var(--av-primary); margin: 0 0 .5rem; }
+.av-season-card p { margin: 0; color: var(--av-mute); line-height: 1.55; }
+.av-note { font-size: .8125rem; color: var(--av-mute); margin-top: .75rem; }
+
+/* trips saved on this device */
+.av-trips { margin-top: 1.5rem; padding: 1.25rem 1.5rem; border-radius: 1.25rem; background: #fff; border: 1px solid var(--av-line); }
+.av-trips.hidden { display: none; }
+.av-trips h3 { margin: 0 0 .5rem; font-family: Outfit, sans-serif; color: var(--av-primary); font-size: 1.125rem; font-weight: 600; }
+.av-trips ul { list-style: none; margin: 0; padding: 0; display: grid; gap: .5rem; }
+.av-trips li { display: flex; flex-direction: column; font-size: .9rem; color: var(--av-mute); }
+.av-trips li b { color: var(--av-primary); }
+
+/* language switcher */
+.av-lang { appearance: none; -webkit-appearance: none; background: var(--av-low) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%2300354a' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right .7rem center; color: var(--av-primary); font-weight: 600; font-size: .875rem; border: 0; border-radius: 9999px; padding: .55rem 1.9rem .55rem 1rem; cursor: pointer; }
+.av-lang-desk { display: none; }
+@media (min-width: 1024px) { .av-lang-desk { display: block; } }
+.av-lang-mob { display: block; width: 100%; margin: .5rem 0; padding-top: .75rem; padding-bottom: .75rem; }
+
+/* install + offline */
+.av-install { display: inline-flex; align-items: center; gap: .5rem; margin-top: 1rem; padding: .7rem 1.2rem; border-radius: 9999px; background: var(--av-primary); color: #fff; font-weight: 600; font-size: .9rem; }
+#av-offline { position: fixed; top: 4.25rem; left: 50%; transform: translate(-50%, -150%); z-index: 70; padding: .45rem 1rem; border-radius: 9999px; background: #805521; color: #fff; font-size: .8125rem; transition: transform .25s ease; }
+#av-offline.show { transform: translate(-50%, 0); }
+
+/* Font fallbacks: Outfit / Plus Jakarta Sans only cover Latin, so Cyrillic, Chinese and offline use need a sans-serif stack */
+.font-body-lg, .font-body-md, .font-body-sm, .font-label-lg, .font-label-md, .font-label-sm {
+  font-family: "Plus Jakarta Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif; }
+.font-display-mobile, .font-headline-lg-mobile, .font-headline-md, .font-headline-sm, .font-title-md {
+  font-family: Outfit, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif; }
+@media (min-width: 768px) {
+  .md\:font-display, .md\:font-headline-lg, .md\:font-headline-md, .md\:font-headline-sm {
+    font-family: Outfit, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif; } }
+.av-pkg h3, .av-pkg-price b, .av-review blockquote, .av-season-card h3, .av-trips h3 { font-family: Outfit, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, "PingFang SC", "Microsoft YaHei", sans-serif; }
+
+/* longer translated labels: keep the mobile bottom bar inside the screen */
+@media (max-width: 430px) {
+  nav.bottom-nav.bottom-nav { padding-inline: .5rem; }
+  nav.bottom-nav.bottom-nav > a { padding-inline: .25rem; min-width: 0; }
+  nav.bottom-nav.bottom-nav .font-label-sm { font-size: .6875rem; }
+  nav.bottom-nav.bottom-nav > a[data-bnav="booking"] { padding-inline: .75rem; }
+}

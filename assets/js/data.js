@@ -20,8 +20,68 @@ window.AV = {
     rateNote: 'All rates include breakfast, tax & green fee',
     // Optional: paste a Formspree / Getform endpoint (https://formspree.io/f/xxxx) to ALSO receive
     // bookings & enquiries by email in the background. Leave '' to use WhatsApp / mailto only.
-    formEndpoint: ''
+    formEndpoint: '',
+    // Optional privacy-friendly analytics (https://www.goatcounter.com – free, no cookies).
+    // Create a site, then put just its code here, e.g. 'athensview' for athensview.goatcounter.com. '' = off.
+    goatcounter: '',
+    // Optional: link to your real review pages (shown as buttons under the reviews). Leave '' to hide each one.
+    reviewLinks: { google: '', tripadvisor: '', booking: '' },
+    // Optional: URL of a JSON feed with booked dates, same shape as `booked` below (e.g. a published Google Apps
+    // Script / Sheet). It is merged with `booked`. Leave '' to use only `booked`.
+    bookedFeed: ''
   },
+
+  /* ---- SEASONAL PRICING ----------------------------------------------------------------------------
+     Each room's `price` is its standard (high-season) nightly rate. A season multiplies that rate.
+     Dates are MM-DD ranges (inclusive; a range may wrap over New Year). First matching season wins.
+     To set an exact price for one room in one season instead, add  rates: { peak: 120, low: 70 }  to the room.
+     PLACEHOLDER numbers – set your real rates. */
+  seasons: [
+    { id: 'peak', label: 'Peak season',  ranges: [['12-20', '01-05']],                      multiplier: 1.25 },
+    { id: 'high', label: 'High season',  ranges: [['01-06', '04-30'], ['12-01', '12-19']],  multiplier: 1 },
+    { id: 'low',  label: 'Green season', ranges: [['05-01', '11-30']],                      multiplier: 0.85 }
+  ],
+
+  /* ---- BOOKED DATES ---------------------------------------------------------------------------------
+     One list per room id. Each entry is [firstNight, checkOutDay] as YYYY-MM-DD – the check-out day itself is free.
+     A listed range means that room type is fully booked for those nights. Example:
+       deluxe: [['2026-12-24', '2027-01-03']]
+     While every list is empty the availability calendar is hidden and all dates are treated as open. */
+  booked: {
+    deluxe: [],
+    family: []
+  },
+
+  /* ---- PACKAGES -------------------------------------------------------------------------------------
+     Bundles that pre-fill the booking form. `discount` is the % taken off room + excursions + transfer.
+     room / excursions use the ids from the lists above. PLACEHOLDER discounts. */
+  packages: [
+    { id: 'escape', name: 'Island Escape', icon: 'beach_access', nights: 3, room: 'deluxe', excursions: ['dolphin', 'turtle'], transfer: 'both', discount: 10,
+      tagline: 'The perfect first taste of Guraidhoo.', guests: 2 },
+    { id: 'sunset', name: 'Sunset Romance', icon: 'wb_twilight', nights: 2, room: 'deluxe', excursions: ['dolphin'], transfer: 'both', discount: 8,
+      tagline: 'Two nights, one golden-hour dhoni cruise.', guests: 2 },
+    { id: 'family', name: 'Family Adventure', icon: 'group', nights: 4, room: 'family', excursions: ['sandbank', 'shark'], transfer: 'both', discount: 12,
+      tagline: 'Space for four, sandbank picnic and sharks.', guests: 4 }
+  ],
+
+  /* ---- REVIEWS --------------------------------------------------------------------------------------
+     Only add REAL guest reviews. `source` (e.g. 'Google', 'TripAdvisor', 'Booking.com') and `url` are optional
+     and, when given, are shown as a link back to the original review. The entry below is a PLACEHOLDER –
+     replace it before launch. If this list is empty the reviews block is hidden. */
+  reviews: [
+    { name: 'Sarah & Mark', country: 'United Kingdom', stars: 5, source: '', url: '',
+      text: 'Athens View gave us the dream Maldives trip without the resort price tag. Staff feels like family!' }
+  ],
+
+  /* ---- CLIMATE (approximate long-term averages for the Kaafu Atoll) -------------------------------- */
+  weather: [
+    { m: 'Jan', air: 30, sea: 28, rain: 100, season: 'dry' }, { m: 'Feb', air: 31, sea: 28, rain: 50,  season: 'dry' },
+    { m: 'Mar', air: 31, sea: 29, rain: 70,  season: 'dry' }, { m: 'Apr', air: 32, sea: 30, rain: 140, season: 'dry' },
+    { m: 'May', air: 31, sea: 30, rain: 225, season: 'green' }, { m: 'Jun', air: 31, sea: 29, rain: 170, season: 'green' },
+    { m: 'Jul', air: 30, sea: 29, rain: 150, season: 'green' }, { m: 'Aug', air: 30, sea: 29, rain: 160, season: 'green' },
+    { m: 'Sep', air: 30, sea: 29, rain: 190, season: 'green' }, { m: 'Oct', air: 30, sea: 29, rain: 215, season: 'green' },
+    { m: 'Nov', air: 30, sea: 29, rain: 195, season: 'green' }, { m: 'Dec', air: 30, sea: 28, rain: 135, season: 'dry' }
+  ],
 
   rooms: [
     {
@@ -103,8 +163,8 @@ window.AV = {
 
   categories: [
     { id: 'all', label: 'All Excursions', icon: 'explore' },
-    { id: 'snorkel', label: 'Snorkeling', icon: 'scuba_diving' },
-    { id: 'dive', label: 'Diving', icon: 'diving' },
+    { id: 'snorkel', label: 'Snorkeling', icon: 'pool' },
+    { id: 'dive', label: 'Diving', icon: 'scuba_diving' },
     { id: 'cruise', label: 'Cruises', icon: 'sailing' },
     { id: 'picnic', label: 'Sandbank', icon: 'beach_access' }
   ],
