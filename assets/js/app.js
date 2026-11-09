@@ -323,6 +323,7 @@
         e.preventDefault(); var email = $('input[type=email]', f).value.trim();
         if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { toast('Please enter a valid email address.'); return; }
         if (C.formEndpoint) { postJson({ type: 'newsletter', email: email }).then(function (ok) { toast(ok ? 'Thank you – you\'re on the Island Chronicle list!' : 'Could not subscribe right now – please try again.'); if (ok) f.reset(); }); }
+        else if (C.demoMode) { try { var L = JSON.parse(localStorage.getItem('av_leads') || '[]'); L.unshift({ type: 'newsletter', contact: email, at: new Date().toISOString() }); localStorage.setItem('av_leads', JSON.stringify(L.slice(0, 50))); } catch (er) {} toast('Thank you – you\'re on the Island Chronicle list!'); f.reset(); }
         else { location.href = 'mailto:' + C.email + '?subject=' + encodeURIComponent('Island Chronicle sign-up') + '&body=' + encodeURIComponent('Please add ' + email + ' to the Island Chronicle list.'); toast('Opening your email app to confirm…'); }
       });
     });

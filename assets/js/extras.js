@@ -149,13 +149,15 @@
     if (!f.elements.consent.checked) { err.textContent = 'Please tick the box to agree to be contacted.'; return; }
     err.textContent = '';
     var lead = { type: 'signup', contact: v, kind: isMail ? 'email' : 'phone', consent: true, code: S.code, offer: S.percent + '% first direct stay', expires: S.expires, page: location.pathname.split('/').pop() || 'index.html', lang: AV.lang || 'en', at: new Date().toISOString() };
+    if (C.demoMode) { try { var L = JSON.parse(localStorage.getItem('av_leads') || '[]'); L.unshift(lead); localStorage.setItem('av_leads', JSON.stringify(L.slice(0, 50))); } catch (er) {} }
     store('av_signup', 'done'); store('av_code', S.code); U.track('signup-submitted');
     var btn = $('.av-su-btn', f); btn.disabled = true;
     function done(ok) {
       $('[data-su-form]', su).classList.add('hidden'); $('[data-su-done]', su).classList.remove('hidden');
+      if (C.demoMode && !C.formEndpoint) ok = true;
       $('[data-su-code]', su).textContent = S.code;
       $('[data-su-msg]', su).textContent = ok ? 'Thank you! We’ve saved your details and will send a welcome message soon. Quote this code when you book – valid until ' + U.prettyDate(S.expires) + '.' : 'Quote this code when you book – valid until ' + U.prettyDate(S.expires) + '.';
-      if (!ok && !C.formEndpoint) window.open('mailto:' + C.email + '?subject=' + encodeURIComponent('Welcome offer – please send me updates') + '&body=' + encodeURIComponent('Hello Athens View, please send me the welcome offer (' + S.code + ') and keep me updated.\nContact: ' + v + '\nI agree to be contacted by email / SMS / WhatsApp.'), '_self');
+      if (!ok && !C.formEndpoint && !C.demoMode) window.open('mailto:' + C.email + '?subject=' + encodeURIComponent('Welcome offer – please send me updates') + '&body=' + encodeURIComponent('Hello Athens View, please send me the welcome offer (' + S.code + ') and keep me updated.\nContact: ' + v + '\nI agree to be contacted by email / SMS / WhatsApp.'), '_self');
     }
     if (C.formEndpoint) U.postJson(lead).then(done); else done(false);
   }

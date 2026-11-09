@@ -22,6 +22,9 @@ window.AV = {
     // Optional: paste a Formspree / Getform endpoint (https://formspree.io/f/xxxx) to ALSO receive
     // bookings & enquiries by email in the background. Leave '' to use WhatsApp / mailto only.
     formEndpoint: '',
+    // DEMO MODE (university assignment): when true and no formEndpoint is set, sign-ups and newsletter forms
+    // show a normal success message and keep a copy in this browser only (no email app opens, nothing is sent).
+    demoMode: true,
     // Optional privacy-friendly analytics (https://www.goatcounter.com – free, no cookies).
     // Create a site, then put just its code here, e.g. 'athensview' for athensview.goatcounter.com. '' = off.
     goatcounter: '',
