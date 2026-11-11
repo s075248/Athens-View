@@ -106,6 +106,21 @@
     lbOpen(set, i < 0 ? 0 : i);
   });
 
+  /* ---------------------------- monthly promos strip ---------------------------- */
+  function mountPromos() {
+    $$('[data-promos]').forEach(function (box) {
+      var today = U.iso(new Date()), list = (AV.promos || []).filter(function (x) { return !x.until || today <= x.until; });
+      if (!list.length) { box.classList.add('hidden'); return; }
+      box.innerHTML = '<p class="av-promos-h">This month\u2019s offers \u00b7 ' + new Date().toLocaleString('en', { month: 'long' }) + '</p><div class="av-promos">' + list.map(function (x) {
+        var msg = 'Hello Athens View! I saw your "' + x.title + '" promo and would like to know more.\nTravel dates: \nNumber of guests: ';
+        return '<article class="av-promo"><span class="av-promo-ico material-symbols-outlined">' + esc(x.icon || 'local_offer') + '</span>' +
+          '<div><h3>' + esc(x.title) + '</h3><p>' + esc(x.text) + '</p>' +
+          '<a class="av-promo-cta" target="_blank" rel="noopener" href="' + U.wa(msg) + '">Ask about this offer</a>' +
+          (x.until ? '<small>Stays until ' + esc(U.prettyDate(x.until)) + '</small>' : '') + '</div></article>';
+      }).join('') + '</div>';
+    });
+  }
+
   function mountOfferConditions() {
     $$('[data-offer-terms]').forEach(function (ul) {
       var S = AV.signup; if (!S) return;
@@ -227,6 +242,6 @@
   }
 
   document.addEventListener('DOMContentLoaded', function () {
-    mountPackages(); mountReviews(); mountRating(); mountOfferConditions(); mountWeather(); initSignup(); mountTrips(); loadFeed(); if (!navigator.onLine) offlineBadge();
+    mountPackages(); mountPromos(); mountReviews(); mountRating(); mountOfferConditions(); mountWeather(); initSignup(); mountTrips(); loadFeed(); if (!navigator.onLine) offlineBadge();
   });
 })();

@@ -270,3 +270,13 @@ nav[aria-label="Main"] a { white-space: nowrap; }
 .av-su-terms { margin-top: .9rem; font-size: .8125rem; color: var(--av-mute); }
 .av-su-terms summary { cursor: pointer; font-weight: 600; color: var(--av-primary); }
 .av-su-terms ul { margin: .5rem 0 0; padding-left: 1.1rem; display: grid; gap: .3rem; }
+
+/* monthly promos strip */
+.av-promos { display: grid; grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+.av-promo { display: flex; gap: .9rem; align-items: flex-start; padding: 1.1rem 1.25rem; border-radius: 1.25rem; background: linear-gradient(135deg, #fff4ea, #fff); border: 1px solid #f3d9c0; box-shadow: 0 8px 22px -10px rgba(10,77,104,.18); }
+.av-promo-ico { flex: none; width: 2.75rem; height: 2.75rem; border-radius: 9999px; background: var(--av-magenta); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; }
+.av-promo h3 { font-family: Outfit, sans-serif; font-size: 1.1rem; font-weight: 600; color: var(--av-primary); margin: 0 0 .2rem; }
+.av-promo p { margin: 0 0 .5rem; font-size: .9rem; color: #1c2b33; }
+.av-promo-cta { display: inline-block; font-size: .85rem; font-weight: 600; color: var(--av-magenta); text-decoration: underline; text-underline-offset: 3px; }
+.av-promo small { display: block; margin-top: .3rem; color: var(--av-mute); font-size: .75rem; }
+.av-promos-h { margin: 0 0 .75rem; font-size: .8rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--av-magenta); }

@@ -70,6 +70,18 @@ window.AV = {
       tagline: 'A full week to slow down and explore the atoll.' }
   ],
 
+  /* ---- MONTHLY PROMOS (strip above the packages) -----------------------------------------------------
+     Qualitative offers only - no prices. `until` (YYYY-MM-DD) hides a promo after that date, so the strip
+     rolls over by itself: edit the list each month. Each promo's button opens a WhatsApp message. */
+  promos: [
+    { id: 'nov-green', icon: 'eco', title: 'Green Season Escape', until: '2026-11-30',
+      text: 'Stay 3 nights or more this November and ask us about a complimentary sunset dolphin cruise upgrade.' },
+    { id: 'nov-quiet', icon: 'self_improvement', title: 'Quiet Island Week', until: '2026-11-30',
+      text: 'Slow down on a calm, uncrowded island. Book a 7-night stay in November and ask about a free snorkel safari.' },
+    { id: 'nov-code', icon: 'redeem', title: 'November welcome code', until: '2026-11-30',
+      text: 'Sign up for our welcome offer and quote ISLAND10 when you book a November stay directly with us.' }
+  ],
+
   /* ---- SIGN-UP OFFER (pop-up) -----------------------------------------------------------------------
      A pop-up shows once per visitor after `delaySeconds`, or when a desktop visitor moves to leave the page.
      It asks for an email or phone number plus consent, then shows the code. The details are sent to
