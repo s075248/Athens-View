@@ -280,3 +280,7 @@ nav[aria-label="Main"] a { white-space: nowrap; }
 .av-promo-cta { display: inline-block; font-size: .85rem; font-weight: 600; color: var(--av-magenta); text-decoration: underline; text-underline-offset: 3px; }
 .av-promo small { display: block; margin-top: .3rem; color: var(--av-mute); font-size: .75rem; }
 .av-promos-h { margin: 0 0 .75rem; font-size: .8rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--av-magenta); }
+
+/* booking: guest rows */
+.av-guest-row { display: grid; grid-template-columns: 1fr; gap: .5rem; align-items: end; }
+@media (min-width: 640px) { .av-guest-row { grid-template-columns: 1fr auto; } }

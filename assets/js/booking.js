@@ -75,7 +75,31 @@
   }
   if (calBox) calBox.addEventListener('click', function (e) { var b = e.target.closest('[data-cal]'); if (!b) return; calOff = Math.max(0, calOff + (+b.dataset.cal) * 2); render(); });
 
+  /* ---- guest list: one row per guest, one of them is the main contact ---- */
+  var guestList = $('#guest-list'), guestN = 0;
+  var GIN = 'w-full px-space-md py-3 rounded-xl bg-surface-container-low outline-none focus:bg-surface-pure focus:ring-2 focus:ring-primary/30 font-body-sm';
+  function syncGuests(n) {
+    if (!guestList || n === guestN) return;
+    var old = $$('[data-gname]', guestList).map(function (i) { return i.value; });
+    var mainEl = $('[name=maincontact]:checked', guestList), main = mainEl ? parseInt(mainEl.value, 10) : 1;
+    if (main > n) main = 1;
+    guestN = n;
+    guestList.innerHTML = Array.apply(null, Array(n)).map(function (_, k) {
+      var i = k + 1;
+      return '<div class="av-guest-row">' +
+        '<div><label for="g-name-' + i + '" class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant">Guest ' + i + ' full name *</label>' +
+        '<input id="g-name-' + i + '" data-gname name="gname' + i + '" ' + (i === 1 ? 'autocomplete="name" ' : 'autocomplete="off" ') + 'required class="mt-1 ' + GIN + '"/></div>' +
+        '<label class="inline-flex items-center gap-2 px-space-md py-3 rounded-xl border border-primary/15 cursor-pointer font-label-md text-label-md text-primary has-[:checked]:bg-primary/10 has-[:checked]:border-primary">' +
+        '<input type="radio" name="maincontact" value="' + i + '" class="w-5 h-5 accent-[#D81B60]" ' + (i === main ? 'checked' : '') + '/>' +
+        'Main contact</label></div>';
+    }).join('');
+    $$('[data-gname]', guestList).forEach(function (inp, k) { if (old[k]) inp.value = old[k]; });
+  }
+  function guestNames() { return $$('[data-gname]', guestList || document).map(function (i) { return i.value.trim(); }); }
+  function mainIndex() { var m = $('[name=maincontact]:checked', form); return m ? parseInt(m.value, 10) - 1 : 0; }
+
   function render() {
+    syncGuests(Math.max(1, Math.min(8, parseInt(gu.value, 10) || 1)));
     var qd = quote();
     var warn = $('#guest-warn');
     warn.textContent = qd.rooms > 1 ? qd.room.name + ' sleeps ' + qd.room.maxGuests + ' – we\'ve included ' + qd.rooms + ' rooms for ' + qd.guests + ' guests.' : '';
@@ -120,15 +144,18 @@
     if (qd.nights < 1) return fail(co, 'Please choose a check-out date after check-in.');
     if (field('checkin') < today) return fail(ci, 'Check-in cannot be in the past.');
     if (qd.conflict) return fail(ci, 'That room is booked for some of those nights – please change the dates or room.');
-    if (!field('name')) return fail(form.elements.name, 'Please enter your full name.');
+    var gnames = guestNames(), mi = mainIndex();
+    for (var gi = 0; gi < gnames.length; gi++) { if (!gnames[gi]) return fail($$('[data-gname]', form)[gi], 'Please enter the full name of guest ' + (gi + 1) + '.'); }
+    var mainName = gnames[mi] || gnames[0];
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(field('email'))) return fail(form.elements.email, 'Please enter a valid email address.');
     if (field('phone').replace(/\D/g, '').length < 6) return fail(form.elements.phone, 'Please enter a phone / WhatsApp number.');
+    if (!field('notes')) return fail(form.elements.notes, 'Please add your special requests. If none, write “No food allergies”.');
 
     var r = ref();
     var lines = ['*Booking request ' + r + '* 🌴', '',
-      '*Guest:* ' + field('name'), '*Email:* ' + field('email'), '*WhatsApp/Phone:* ' + field('phone'), field('country') ? '*Country:* ' + field('country') : '',
+      '*Main contact:* ' + mainName, '*Email:* ' + field('email'), '*WhatsApp/Phone:* ' + field('phone'), field('country') ? '*Country:* ' + field('country') : '',
       '', '*Stay:* ' + U.prettyDate(field('checkin')) + ' → ' + U.prettyDate(field('checkout')) + ' (' + qd.nights + ' nights)',
-      '*Guests:* ' + qd.guests, '*Room:* ' + qd.rooms + ' × ' + qd.room.name,
+      '*Guests:* ' + qd.guests, gnames.map(function (n, ix) { return '  Guest ' + (ix + 1) + ': ' + n + (ix === mi ? ' (main contact)' : ''); }).join('\n'), '*Room:* ' + qd.rooms + ' × ' + qd.room.name,
       qd.excs.length ? '*Excursions:* ' + qd.excs.map(function (x) { return x.name; }).join(', ') : '',
       '*Transfer:* ' + TRANSFER_LABEL[qd.transfer],
       field('discount') ? '*Discount code:* ' + field('discount').toUpperCase() + ' (to be applied by reception)' : '',
@@ -136,7 +163,7 @@
       '', '*Estimated total:* ' + money(qd.total) + ' (' + C.rateNote.toLowerCase() + ')'].filter(function (l, i, a) { return l !== '' || (a[i - 1] !== ''); });
     var text = lines.join('\n');
 
-    var record = { ref: r, at: new Date().toISOString(), name: field('name'), email: field('email'), phone: field('phone'), checkin: field('checkin'), checkout: field('checkout'), guests: qd.guests, room: qd.room.id, rooms: qd.rooms, excursions: qd.excs.map(function (x) { return x.id; }), transfer: qd.transfer, total: qd.total, discountCode: field('discount').toUpperCase() };
+    var record = { ref: r, at: new Date().toISOString(), name: mainName, guestNames: gnames, email: field('email'), phone: field('phone'), checkin: field('checkin'), checkout: field('checkout'), guests: qd.guests, room: qd.room.id, rooms: qd.rooms, excursions: qd.excs.map(function (x) { return x.id; }), transfer: qd.transfer, total: qd.total, discountCode: field('discount').toUpperCase() };
     try { var all = JSON.parse(localStorage.getItem('av_bookings') || '[]'); all.unshift(record); localStorage.setItem('av_bookings', JSON.stringify(all.slice(0, 10))); } catch (er) {}
     U.track('booking-submitted');
     var sent = $('#conf-sent');
