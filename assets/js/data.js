@@ -122,7 +122,7 @@ window.AV = {
   rooms: [
     {
       id: 'deluxe', name: 'Deluxe Ocean View Double', badge: 'Most Popular', badgeStyle: 'magenta',
-      price: 85, size: 28, maxGuests: 2, photos: 12,
+      price: 85, size: 19, maxGuests: 2, photos: 12,
       short: 'Private balcony overlooking the turquoise reef.',
       desc: 'A bright haven featuring hand-crafted teak furniture, an inviting king bed, private sunset balcony facing the outer reef lagoon, and soothing coastal aesthetics.',
       images: ['https://lh3.googleusercontent.com/aida-public/AB6AXuCbBERHk9LAzTXOGPDK-dkg-OUo7ij7osmxcXira5ACQeRYBhxK4HKyr8VsohFDYzE3m7gQoLQuhbn_TTc10k5qX3k2GjoyFL6eFmopd8niDjix7egmhVLyI5gGtHfzYKRJhUFOR6zffTweTmvjP6f2nlB878LT_BAg3tKOS-ox8JyrEAy0ZO9MD_STgCzSGX_MGAw1J4awvl4Lwvmjl1zeWPsdfb2oQzzVtwj6WdTh', 'https://lh3.googleusercontent.com/aida-public/AB6AXuCZRIhq3wxL1QjhA3kXkV2HKiyJ3JvArfgLRpo2EJBjhGXyvLpp-g2bjBveH29LcJ82zkrMsQDReH5tHwVoDfVE5fWtmYLkGcEzddFzmYKfmLUsq1uBdjhSni_jLu-dXF8nogr6ee-rQT1frzid4xa5yUQcesqy5mnTjXZfRcKmjgSlH5B0jl1zFE5iNVvVABwcFzzSKDL8iTBvbX6RDR6HDLFh3CxQNZ_FX3S19Xqy'],
@@ -138,7 +138,7 @@ window.AV = {
     },
     {
       id: 'family', name: 'Family Island Suite', badge: 'Spacious Comfort', badgeStyle: 'teal',
-      price: 135, size: 45, maxGuests: 4, photos: 16,
+      price: 135, size: 25, maxGuests: 4, photos: 16,
       short: 'Two sleeping areas, double terrace, snorkel gear.',
       desc: 'Designed for families or groups desiring generous living space. Features two conjoined sleeping quarters, double terrace balconies, and complimentary snorkel gear.',
       images: ['https://lh3.googleusercontent.com/aida-public/AB6AXuAwfPXuJprH-nXuaeAe88B5A17c5Y8vvtxC5k_XfpSAH8Gxw7wURNgGbAnw6nf9OvXyL0vi6af_6tFBPIFpFPyt86_1sA3YLPw-6bz4UWgE7VKUlx6jrNviLhZVVq1WA6ee5LGW-xha1uaKLxp5ScVhSezjzluc5T8ZNiqQ7P7OV6XrkXF6dq1cLO0hx3a4HWka72V1iOiLZlVux7PUCo3pmOGs2OWIL-g92nW80r-1', 'https://lh3.googleusercontent.com/aida-public/AB6AXuDDWIz2mg70qkpSdl-fTgxeBEn2cRxn76KT37i3t6AjhJRg57_X8Fjsv8mKfNWT2Vy6kKskyVKRIL75nS9weJ9MNS9kvGMeqsQLkxwtdjlHDGL3KytSzd1sIaOfmWQk1LiiODNEX17vOKb_Ig_8jKtcmz0FYSXxYgwT4upBAeoJAKJIvYfF8O3gGP6IfYinT6iqB2F-nFI99jheOt7I-DaXBx3Ltni7jvHxfErOYhPF'],
